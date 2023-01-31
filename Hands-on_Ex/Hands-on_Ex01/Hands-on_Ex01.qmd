@@ -9,7 +9,7 @@ date: "`r Sys.Date()`"
 
 ## Installing and loading R packages
 
-In this section, I will install anad load tidyverse and sf packages.
+In this section, I will install and load tidyverse and sf packages.
 
 ```{r}
 
