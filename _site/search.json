@@ -236,5 +236,19 @@
     "title": "In-class Exercise 3: Analytical Mapping",
     "section": "Recode LGAs with zero water point into NA",
     "text": "Recode LGAs with zero water point into NA\n\nNGA_wp <- NGA_wp %>%\n  mutate(wp_functional = na_if(\n    total_wp, total_wp < 0))"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#the-nga-data-set",
+    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#the-nga-data-set",
+    "title": "In-class Exercise 2: Data Wrangling with R",
+    "section": "The NGA data set",
+    "text": "The NGA data set\n\n\nReading layer `nga_admbnda_adm2_osgof_20190417' from data source \n  `C:\\celinderr\\IS415-GAA\\In-class_Ex\\In-class_Ex02\\data\\geospatial' \n  using driver `ESRI Shapefile'\nSimple feature collection with 774 features and 16 fields\nGeometry type: MULTIPOLYGON\nDimension:     XY\nBounding box:  xmin: 2.668534 ymin: 4.273007 xmax: 14.67882 ymax: 13.89442\nGeodetic CRS:  WGS 84"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#write-the-extracted-data-into-rds-format",
+    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#write-the-extracted-data-into-rds-format",
+    "title": "In-class Exercise 2: Data Wrangling with R",
+    "section": "Write the extracted data into rds format",
+    "text": "Write the extracted data into rds format"
   }
 ]
