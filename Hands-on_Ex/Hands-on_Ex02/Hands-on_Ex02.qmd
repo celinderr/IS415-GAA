@@ -144,15 +144,15 @@ tm_shape(mpsz_pop2020)+
 ## Using different classification methods, compare the differences
 
 ```{r}
-tm_shape(mpsz_pop2020)+
+tm_shape(mpsz_pop2020) +
   tm_fill("DEPENDENCY",
           n = 5,
           style = "hclust") +
   tm_borders(alpha = 0.5)
 tm_shape(mpsz_pop2020)+
   tm_fill("DEPENDENCY",
-          n =7,
-          style = "equal") +
+          n = 7,
+          style = "quantile") +
   tm_borders(alpha = 0.5)
 ```
 

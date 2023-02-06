@@ -88,7 +88,7 @@
     "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#using-different-classification-methods-compare-the-differences",
     "title": "Hands-on Exercise 2: Choropleth Mapping with R",
     "section": "Using different classification methods, compare the differences",
-    "text": "Using different classification methods, compare the differences\n\ntm_shape(mpsz_pop2020)+\n  tm_fill(\"DEPENDENCY\",\n          n = 5,\n          style = \"hclust\") +\n  tm_borders(alpha = 0.5)\n\n\n\ntm_shape(mpsz_pop2020)+\n  tm_fill(\"DEPENDENCY\",\n          n =7,\n          style = \"equal\") +\n  tm_borders(alpha = 0.5)"
+    "text": "Using different classification methods, compare the differences\n\ntm_shape(mpsz_pop2020) +\n  tm_fill(\"DEPENDENCY\",\n          n = 5,\n          style = \"hclust\") +\n  tm_borders(alpha = 0.5)\n\n\n\ntm_shape(mpsz_pop2020)+\n  tm_fill(\"DEPENDENCY\",\n          n = 7,\n          style = \"quantile\") +\n  tm_borders(alpha = 0.5)"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#same-classification-different-bins",
