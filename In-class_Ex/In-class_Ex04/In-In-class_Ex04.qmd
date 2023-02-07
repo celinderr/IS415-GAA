@@ -1,0 +1,48 @@
+---
+title: "In Class Exercise 4: 2nd Order Spatial Point Patterns Analysis Methods"
+execute:
+  warning: false
+date: "`r Sys.Date()`"
+echo: false
+---
+# Loading the Packages
+```{r}
+pacman::p_load(maptools, sf, raster, spatstat, tmap)
+```
+# Importing the Data
+```{r}
+childcare_sf <- st_read("data/child-care-services-geojson.geojson") %>%
+  st_transform(crs = 3414)
+```
+```{r}
+sg_sf <- st_read(dsn = "data", 
+                 layer="CostalOutline")
+```
+```{r}
+mpsz_sf <- st_read(dsn = "data", 
+                layer = "MP14_SUBZONE_WEB_PL")
+```
+# Mapping the geospatial data sets
+```{r}
+tmap_mode('view')
+```
+## Set tmode to plotting
+```{r}
+tm_shape(childcare_sf)+
+  tm_dots()
+```
+## Set tmode to plotting
+```{r}
+tmap_mode('plot')
+```
+# Geospatial Data wrangling
+## Converting sf data frames to sp’s Spatial* class
+```{r}
+childcare <- as_Spatial(childcare_sf)
+mpsz <- as_Spatial(mpsz_sf)
+sg <- as_Spatial(sg_sf)
+```
+```{r}
+childcare
+```
+---

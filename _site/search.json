@@ -250,5 +250,47 @@
     "title": "In-class Exercise 2: Data Wrangling with R",
     "section": "Write the extracted data into rds format",
     "text": "Write the extracted data into rds format"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex04/In-In-class_Ex04.html",
+    "href": "In-class_Ex/In-class_Ex04/In-In-class_Ex04.html",
+    "title": "In Class Exercise 4: 2nd Order Spatial Point Patterns Analysis Methods",
+    "section": "",
+    "text": "Loading the Packages\n\n\n\n\n\nImporting the Data\n\n\nReading layer `child-care-services-geojson' from data source \n  `C:\\celinderr\\IS415-GAA\\In-class_Ex\\In-class_Ex04\\data\\child-care-services-geojson.geojson' \n  using driver `GeoJSON'\nSimple feature collection with 1545 features and 2 fields\nGeometry type: POINT\nDimension:     XYZ\nBounding box:  xmin: 103.6824 ymin: 1.248403 xmax: 103.9897 ymax: 1.462134\nz_range:       zmin: 0 zmax: 0\nGeodetic CRS:  WGS 84\n\n\n\n\nReading layer `CostalOutline' from data source \n  `C:\\celinderr\\IS415-GAA\\In-class_Ex\\In-class_Ex04\\data' using driver `ESRI Shapefile'\nSimple feature collection with 60 features and 4 fields\nGeometry type: POLYGON\nDimension:     XY\nBounding box:  xmin: 2663.926 ymin: 16357.98 xmax: 56047.79 ymax: 50244.03\nProjected CRS: SVY21\n\n\n\n\nReading layer `MP14_SUBZONE_WEB_PL' from data source \n  `C:\\celinderr\\IS415-GAA\\In-class_Ex\\In-class_Ex04\\data' using driver `ESRI Shapefile'\nSimple feature collection with 323 features and 15 fields\nGeometry type: MULTIPOLYGON\nDimension:     XY\nBounding box:  xmin: 2667.538 ymin: 15748.72 xmax: 56396.44 ymax: 50256.33\nProjected CRS: SVY21\n\n\n\n\nMapping the geospatial data sets"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex05/data/stores.html",
+    "href": "In-class_Ex/In-class_Ex05/data/stores.html",
+    "title": "IS415_GAA",
+    "section": "",
+    "text": "<!DOCTYPE qgis PUBLIC ‘http://mrcc.com/qgis.dtd’ ‘SYSTEM’>     \n\n\n        0 0     false"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex05/data/study_area.html",
+    "href": "In-class_Ex/In-class_Ex05/data/study_area.html",
+    "title": "IS415_GAA",
+    "section": "",
+    "text": "<!DOCTYPE qgis PUBLIC ‘http://mrcc.com/qgis.dtd’ ‘SYSTEM’>     dataset\n\n\n        0 0     false"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex04/In-In-class_Ex04.html#set-tmode-to-plotting",
+    "href": "In-class_Ex/In-class_Ex04/In-In-class_Ex04.html#set-tmode-to-plotting",
+    "title": "In Class Exercise 4: 2nd Order Spatial Point Patterns Analysis Methods",
+    "section": "Set tmode to plotting",
+    "text": "Set tmode to plotting"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex04/In-In-class_Ex04.html#set-tmode-to-plotting-1",
+    "href": "In-class_Ex/In-class_Ex04/In-In-class_Ex04.html#set-tmode-to-plotting-1",
+    "title": "In Class Exercise 4: 2nd Order Spatial Point Patterns Analysis Methods",
+    "section": "Set tmode to plotting",
+    "text": "Set tmode to plotting"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex04/In-In-class_Ex04.html#converting-sf-data-frames-to-sps-spatial-class",
+    "href": "In-class_Ex/In-class_Ex04/In-In-class_Ex04.html#converting-sf-data-frames-to-sps-spatial-class",
+    "title": "In Class Exercise 4: 2nd Order Spatial Point Patterns Analysis Methods",
+    "section": "Converting sf data frames to sp’s Spatial* class",
+    "text": "Converting sf data frames to sp’s Spatial* class\n\n\n\n\n\nclass       : SpatialPointsDataFrame \nfeatures    : 1545 \nextent      : 11203.01, 45404.24, 25667.6, 49300.88  (xmin, xmax, ymin, ymax)\ncrs         : +proj=tmerc +lat_0=1.36666666666667 +lon_0=103.833333333333 +k=1 +x_0=28001.642 +y_0=38744.572 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs \nvariables   : 2\nnames       :    Name,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           Description \nmin values  :   kml_1, <center><table><tr><th colspan='2' align='center'><em>Attributes</em></th></tr><tr bgcolor=\"#E3E3F3\"> <th>ADDRESSBLOCKHOUSENUMBER</th> <td></td> </tr><tr bgcolor=\"\"> <th>ADDRESSBUILDINGNAME</th> <td></td> </tr><tr bgcolor=\"#E3E3F3\"> <th>ADDRESSPOSTALCODE</th> <td>018989</td> </tr><tr bgcolor=\"\"> <th>ADDRESSSTREETNAME</th> <td>1, MARINA BOULEVARD, #B1 - 01, ONE MARINA BOULEVARD, SINGAPORE 018989</td> </tr><tr bgcolor=\"#E3E3F3\"> <th>ADDRESSTYPE</th> <td></td> </tr><tr bgcolor=\"\"> <th>DESCRIPTION</th> <td></td> </tr><tr bgcolor=\"#E3E3F3\"> <th>HYPERLINK</th> <td></td> </tr><tr bgcolor=\"\"> <th>LANDXADDRESSPOINT</th> <td>0</td> </tr><tr bgcolor=\"#E3E3F3\"> <th>LANDYADDRESSPOINT</th> <td>0</td> </tr><tr bgcolor=\"\"> <th>NAME</th> <td>THE LITTLE SKOOL-HOUSE INTERNATIONAL PTE. LTD.</td> </tr><tr bgcolor=\"#E3E3F3\"> <th>PHOTOURL</th> <td></td> </tr><tr bgcolor=\"\"> <th>ADDRESSFLOORNUMBER</th> <td></td> </tr><tr bgcolor=\"#E3E3F3\"> <th>INC_CRC</th> <td>08F73931F4A691F4</td> </tr><tr bgcolor=\"\"> <th>FMEL_UPD_D</th> <td>20200826094036</td> </tr><tr bgcolor=\"#E3E3F3\"> <th>ADDRESSUNITNUMBER</th> <td></td> </tr></table></center> \nmax values  : kml_999,                  <center><table><tr><th colspan='2' align='center'><em>Attributes</em></th></tr><tr bgcolor=\"#E3E3F3\"> <th>ADDRESSBLOCKHOUSENUMBER</th> <td></td> </tr><tr bgcolor=\"\"> <th>ADDRESSBUILDINGNAME</th> <td></td> </tr><tr bgcolor=\"#E3E3F3\"> <th>ADDRESSPOSTALCODE</th> <td>829646</td> </tr><tr bgcolor=\"\"> <th>ADDRESSSTREETNAME</th> <td>200, PONGGOL SEVENTEENTH AVENUE, SINGAPORE 829646</td> </tr><tr bgcolor=\"#E3E3F3\"> <th>ADDRESSTYPE</th> <td></td> </tr><tr bgcolor=\"\"> <th>DESCRIPTION</th> <td>Child Care Services</td> </tr><tr bgcolor=\"#E3E3F3\"> <th>HYPERLINK</th> <td></td> </tr><tr bgcolor=\"\"> <th>LANDXADDRESSPOINT</th> <td>0</td> </tr><tr bgcolor=\"#E3E3F3\"> <th>LANDYADDRESSPOINT</th> <td>0</td> </tr><tr bgcolor=\"\"> <th>NAME</th> <td>RAFFLES KIDZ @ PUNGGOL PTE LTD</td> </tr><tr bgcolor=\"#E3E3F3\"> <th>PHOTOURL</th> <td></td> </tr><tr bgcolor=\"\"> <th>ADDRESSFLOORNUMBER</th> <td></td> </tr><tr bgcolor=\"#E3E3F3\"> <th>INC_CRC</th> <td>379D017BF244B0FA</td> </tr><tr bgcolor=\"\"> <th>FMEL_UPD_D</th> <td>20200826094036</td> </tr><tr bgcolor=\"#E3E3F3\"> <th>ADDRESSUNITNUMBER</th> <td></td> </tr></table></center>"
   }
 ]
