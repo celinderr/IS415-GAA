@@ -1,1 +1,39 @@
+---
+title: "Hands-on Exercise 4: 1st Order Spatial Point Patterns Analysis Methods"
+---
 
+# Importing Packages
+
+```{r}
+pacman::p_load(maptools, sf, raster, spatstat, tmap)
+```
+
+# Reading Data
+
+```{r}
+childcare_sf <- st_read("data/child-care-services-geojson.geojson") %>%
+  st_transform(crs = 3414)
+```
+
+```{r}
+sg_sf <- st_read(dsn = "data", layer="CostalOutline")
+```
+
+```{r}
+mpsz_sf <- st_read(dsn = "data", 
+                layer = "MP14_SUBZONE_WEB_PL")
+```
+
+```{r}
+childcare_sf
+```
+
+```{r}
+sg_sf
+```
+
+```{r}
+mpsz_sf
+```
+
+## These geospatial data uses an SVY21 projection system.

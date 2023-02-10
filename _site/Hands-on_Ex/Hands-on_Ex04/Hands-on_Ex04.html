@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>IS415_GAA – hands-on_ex04</title>
+<title>IS415_GAA - Hands-on Exercise 4: 1st Order Spatial Point Patterns Analysis Methods</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,69 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1.6em;
   vertical-align: middle;
 }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -92,6 +155,14 @@ ul.task-list li input[type="checkbox"] {
     <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html">
  <span class="dropdown-text">Hand-on Exercise 2</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html">
+ <span class="dropdown-text">Hand-on Exercise 3</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04.html">
+ <span class="dropdown-text">Hand-on Exercise 4</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -146,15 +217,203 @@ ul.task-list li input[type="checkbox"] {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#importing-packages" id="toc-importing-packages" class="nav-link active" data-scroll-target="#importing-packages">Importing Packages</a></li>
+  <li><a href="#reading-data" id="toc-reading-data" class="nav-link" data-scroll-target="#reading-data">Reading Data</a>
+  <ul class="collapse">
+  <li><a href="#these-geospatial-data-uses-an-svy21-projection-system." id="toc-these-geospatial-data-uses-an-svy21-projection-system." class="nav-link" data-scroll-target="#these-geospatial-data-uses-an-svy21-projection-system.">These geospatial data uses an SVY21 projection system.</a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Hands-on Exercise 4: 1st Order Spatial Point Patterns Analysis Methods</h1>
+</div>
 
 
 
+<div class="quarto-title-meta">
 
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="importing-packages" class="level1">
+<h1>Importing Packages</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(maptools, sf, raster, spatstat, tmap)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="reading-data" class="level1">
+<h1>Reading Data</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>childcare_sf <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">"data/child-care-services-geojson.geojson"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">3414</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Reading layer `child-care-services-geojson' from data source 
+  `C:\celinderr\IS415-GAA\Hands-on_Ex\Hands-on_Ex04\data\child-care-services-geojson.geojson' 
+  using driver `GeoJSON'
+Simple feature collection with 1545 features and 2 fields
+Geometry type: POINT
+Dimension:     XYZ
+Bounding box:  xmin: 103.6824 ymin: 1.248403 xmax: 103.9897 ymax: 1.462134
+z_range:       zmin: 0 zmax: 0
+Geodetic CRS:  WGS 84</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>sg_sf <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data"</span>, <span class="at">layer=</span><span class="st">"CostalOutline"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Reading layer `CostalOutline' from data source 
+  `C:\celinderr\IS415-GAA\Hands-on_Ex\Hands-on_Ex04\data' using driver `ESRI Shapefile'
+Simple feature collection with 60 features and 4 fields
+Geometry type: POLYGON
+Dimension:     XY
+Bounding box:  xmin: 2663.926 ymin: 16357.98 xmax: 56047.79 ymax: 50244.03
+Projected CRS: SVY21</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mpsz_sf <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data"</span>, </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">layer =</span> <span class="st">"MP14_SUBZONE_WEB_PL"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Reading layer `MP14_SUBZONE_WEB_PL' from data source 
+  `C:\celinderr\IS415-GAA\Hands-on_Ex\Hands-on_Ex04\data' using driver `ESRI Shapefile'
+Simple feature collection with 323 features and 15 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: 2667.538 ymin: 15748.72 xmax: 56396.44 ymax: 50256.33
+Projected CRS: SVY21</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>childcare_sf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 1545 features and 2 fields
+Geometry type: POINT
+Dimension:     XYZ
+Bounding box:  xmin: 11203.01 ymin: 25667.6 xmax: 45404.24 ymax: 49300.88
+z_range:       zmin: 0 zmax: 0
+Projected CRS: SVY21 / Singapore TM
+First 10 features:
+     Name
+1   kml_1
+2   kml_2
+3   kml_3
+4   kml_4
+5   kml_5
+6   kml_6
+7   kml_7
+8   kml_8
+9   kml_9
+10 kml_10
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         Description
+1                     &lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th colspan='2' align='center'&gt;&lt;em&gt;Attributes&lt;/em&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSBLOCKHOUSENUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSBUILDINGNAME&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSPOSTALCODE&lt;/th&gt; &lt;td&gt;760742&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSSTREETNAME&lt;/th&gt; &lt;td&gt;742, YISHUN AVENUE 5, #01 - 470, SINGAPORE 760742&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSTYPE&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;DESCRIPTION&lt;/th&gt; &lt;td&gt;Child Care Services&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;HYPERLINK&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;LANDXADDRESSPOINT&lt;/th&gt; &lt;td&gt;0&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;LANDYADDRESSPOINT&lt;/th&gt; &lt;td&gt;0&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;NAME&lt;/th&gt; &lt;td&gt;AVERBEL CHILD DEVELOPMENT CENTRE PTE LTD&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;PHOTOURL&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSFLOORNUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;INC_CRC&lt;/th&gt; &lt;td&gt;AEA27114446235CE&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;FMEL_UPD_D&lt;/th&gt; &lt;td&gt;20200826094036&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSUNITNUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;/table&gt;&lt;/center&gt;
+2                                                        &lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th colspan='2' align='center'&gt;&lt;em&gt;Attributes&lt;/em&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSBLOCKHOUSENUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSBUILDINGNAME&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSPOSTALCODE&lt;/th&gt; &lt;td&gt;159053&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSSTREETNAME&lt;/th&gt; &lt;td&gt;20, LENGKOK BAHRU, #02 - 05, SINGAPORE 159053&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSTYPE&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;DESCRIPTION&lt;/th&gt; &lt;td&gt;Child Care Services&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;HYPERLINK&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;LANDXADDRESSPOINT&lt;/th&gt; &lt;td&gt;0&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;LANDYADDRESSPOINT&lt;/th&gt; &lt;td&gt;0&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;NAME&lt;/th&gt; &lt;td&gt;AWWA LTD.&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;PHOTOURL&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSFLOORNUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;INC_CRC&lt;/th&gt; &lt;td&gt;86B24416FB1663C6&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;FMEL_UPD_D&lt;/th&gt; &lt;td&gt;20200826094036&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSUNITNUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;/table&gt;&lt;/center&gt;
+3                            &lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th colspan='2' align='center'&gt;&lt;em&gt;Attributes&lt;/em&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSBLOCKHOUSENUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSBUILDINGNAME&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSPOSTALCODE&lt;/th&gt; &lt;td&gt;556912&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSSTREETNAME&lt;/th&gt; &lt;td&gt;22, LI HWAN VIEW, GOLDEN HILL ESTATE, SINGAPORE 556912&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSTYPE&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;DESCRIPTION&lt;/th&gt; &lt;td&gt;Child Care Services&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;HYPERLINK&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;LANDXADDRESSPOINT&lt;/th&gt; &lt;td&gt;0&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;LANDYADDRESSPOINT&lt;/th&gt; &lt;td&gt;0&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;NAME&lt;/th&gt; &lt;td&gt;BABIES BY-THE-PARK PTE. LTD.&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;PHOTOURL&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSFLOORNUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;INC_CRC&lt;/th&gt; &lt;td&gt;F971CBBA973E1AE5&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;FMEL_UPD_D&lt;/th&gt; &lt;td&gt;20200826094036&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSUNITNUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;/table&gt;&lt;/center&gt;
+4                     &lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th colspan='2' align='center'&gt;&lt;em&gt;Attributes&lt;/em&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSBLOCKHOUSENUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSBUILDINGNAME&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSPOSTALCODE&lt;/th&gt; &lt;td&gt;569139&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSSTREETNAME&lt;/th&gt; &lt;td&gt;3, ANG MO KIO STREET 62, #01 - 36, LINK@AMK, SINGAPORE 569139&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSTYPE&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;DESCRIPTION&lt;/th&gt; &lt;td&gt;Child Care Services&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;HYPERLINK&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;LANDXADDRESSPOINT&lt;/th&gt; &lt;td&gt;0&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;LANDYADDRESSPOINT&lt;/th&gt; &lt;td&gt;0&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;NAME&lt;/th&gt; &lt;td&gt;Baby Elk Infant Care Pte Ltd&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;PHOTOURL&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSFLOORNUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;INC_CRC&lt;/th&gt; &lt;td&gt;86A4F25D1C7C9D85&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;FMEL_UPD_D&lt;/th&gt; &lt;td&gt;20200826094036&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSUNITNUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;/table&gt;&lt;/center&gt;
+5                                               &lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th colspan='2' align='center'&gt;&lt;em&gt;Attributes&lt;/em&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSBLOCKHOUSENUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSBUILDINGNAME&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSPOSTALCODE&lt;/th&gt; &lt;td&gt;467961&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSSTREETNAME&lt;/th&gt; &lt;td&gt;22A, KEW DRIVE, SINGAPORE 467961&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSTYPE&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;DESCRIPTION&lt;/th&gt; &lt;td&gt;Child Care Services&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;HYPERLINK&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;LANDXADDRESSPOINT&lt;/th&gt; &lt;td&gt;0&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;LANDYADDRESSPOINT&lt;/th&gt; &lt;td&gt;0&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;NAME&lt;/th&gt; &lt;td&gt;BABYPLANET MONTESSORI PTE. LTD.&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;PHOTOURL&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSFLOORNUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;INC_CRC&lt;/th&gt; &lt;td&gt;CFE3F056F8171C7B&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;FMEL_UPD_D&lt;/th&gt; &lt;td&gt;20200826094036&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSUNITNUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;/table&gt;&lt;/center&gt;
+6                                           &lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th colspan='2' align='center'&gt;&lt;em&gt;Attributes&lt;/em&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSBLOCKHOUSENUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSBUILDINGNAME&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSPOSTALCODE&lt;/th&gt; &lt;td&gt;598523&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSSTREETNAME&lt;/th&gt; &lt;td&gt;3 Jalan Kakatua, JURONG PARK, SINGAPORE 598523&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSTYPE&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;DESCRIPTION&lt;/th&gt; &lt;td&gt;Child Care Services&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;HYPERLINK&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;LANDXADDRESSPOINT&lt;/th&gt; &lt;td&gt;0&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;LANDYADDRESSPOINT&lt;/th&gt; &lt;td&gt;0&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;NAME&lt;/th&gt; &lt;td&gt;BAMBINI CHILDCARE LLP&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;PHOTOURL&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSFLOORNUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;INC_CRC&lt;/th&gt; &lt;td&gt;2B4F0B285ED28C4A&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;FMEL_UPD_D&lt;/th&gt; &lt;td&gt;20200826094036&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSUNITNUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;/table&gt;&lt;/center&gt;
+7                              &lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th colspan='2' align='center'&gt;&lt;em&gt;Attributes&lt;/em&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSBLOCKHOUSENUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSBUILDINGNAME&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSPOSTALCODE&lt;/th&gt; &lt;td&gt;160131&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSSTREETNAME&lt;/th&gt; &lt;td&gt;131, JALAN BUKIT MERAH, #01 - 1591, SINGAPORE 160131&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSTYPE&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;DESCRIPTION&lt;/th&gt; &lt;td&gt;Child Care Services&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;HYPERLINK&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;LANDXADDRESSPOINT&lt;/th&gt; &lt;td&gt;0&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;LANDYADDRESSPOINT&lt;/th&gt; &lt;td&gt;0&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;NAME&lt;/th&gt; &lt;td&gt;BAMBINI MONTESSORI PTE. LTD.&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;PHOTOURL&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSFLOORNUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;INC_CRC&lt;/th&gt; &lt;td&gt;F62A225197813BBD&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;FMEL_UPD_D&lt;/th&gt; &lt;td&gt;20200826094036&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSUNITNUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;/table&gt;&lt;/center&gt;
+8                        &lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th colspan='2' align='center'&gt;&lt;em&gt;Attributes&lt;/em&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSBLOCKHOUSENUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSBUILDINGNAME&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSPOSTALCODE&lt;/th&gt; &lt;td&gt;543319&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSSTREETNAME&lt;/th&gt; &lt;td&gt;319C, ANCHORVALE DRIVE, #01 - 66, SINGAPORE 543319&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSTYPE&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;DESCRIPTION&lt;/th&gt; &lt;td&gt;Child Care Services&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;HYPERLINK&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;LANDXADDRESSPOINT&lt;/th&gt; &lt;td&gt;0&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;LANDYADDRESSPOINT&lt;/th&gt; &lt;td&gt;0&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;NAME&lt;/th&gt; &lt;td&gt;BERRY TREE PRESCHOOL PRIVATE LIMITED&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;PHOTOURL&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSFLOORNUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;INC_CRC&lt;/th&gt; &lt;td&gt;AE242159867D5EB2&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;FMEL_UPD_D&lt;/th&gt; &lt;td&gt;20200826094036&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSUNITNUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;/table&gt;&lt;/center&gt;
+9  &lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th colspan='2' align='center'&gt;&lt;em&gt;Attributes&lt;/em&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSBLOCKHOUSENUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSBUILDINGNAME&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSPOSTALCODE&lt;/th&gt; &lt;td&gt;750511&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSSTREETNAME&lt;/th&gt; &lt;td&gt;511, CANBERRA ROAD, #03 - 02, SEMBAWANG MART, SINGAPORE 750511&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSTYPE&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;DESCRIPTION&lt;/th&gt; &lt;td&gt;Child Care Services&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;HYPERLINK&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;LANDXADDRESSPOINT&lt;/th&gt; &lt;td&gt;0&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;LANDYADDRESSPOINT&lt;/th&gt; &lt;td&gt;0&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;NAME&lt;/th&gt; &lt;td&gt;BERRY TREE PRESCHOOL@SEMBAWANG PRIVATE LIMITED&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;PHOTOURL&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSFLOORNUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;INC_CRC&lt;/th&gt; &lt;td&gt;C1456F97A17ED64A&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;FMEL_UPD_D&lt;/th&gt; &lt;td&gt;20200826094036&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSUNITNUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;/table&gt;&lt;/center&gt;
+10                    &lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th colspan='2' align='center'&gt;&lt;em&gt;Attributes&lt;/em&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSBLOCKHOUSENUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSBUILDINGNAME&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSPOSTALCODE&lt;/th&gt; &lt;td&gt;823195&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSSTREETNAME&lt;/th&gt; &lt;td&gt;195C, PUNGGOL ROAD, #01 - 532, THE PERIWINKLE, SINGAPORE 823195&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSTYPE&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;DESCRIPTION&lt;/th&gt; &lt;td&gt;Child Care Services&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;HYPERLINK&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;LANDXADDRESSPOINT&lt;/th&gt; &lt;td&gt;0&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;LANDYADDRESSPOINT&lt;/th&gt; &lt;td&gt;0&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;NAME&lt;/th&gt; &lt;td&gt;BERRY TREE@PUNGGOL PTE LTD&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;PHOTOURL&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;ADDRESSFLOORNUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;INC_CRC&lt;/th&gt; &lt;td&gt;4F6A8FCA467C3437&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;FMEL_UPD_D&lt;/th&gt; &lt;td&gt;20200826094036&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;ADDRESSUNITNUMBER&lt;/th&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;&lt;/table&gt;&lt;/center&gt;
+                        geometry
+1   POINT Z (27976.73 45716.7 0)
+2     POINT Z (25824 29900.09 0)
+3  POINT Z (31399.04 37416.36 0)
+4   POINT Z (29268.43 40942.1 0)
+5  POINT Z (41217.74 33554.94 0)
+6  POINT Z (20644.07 36118.78 0)
+7  POINT Z (27427.95 29182.36 0)
+8  POINT Z (34378.47 41423.03 0)
+9  POINT Z (26467.04 48384.34 0)
+10 POINT Z (36173.81 42550.33 0)</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>sg_sf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 60 features and 4 fields
+Geometry type: POLYGON
+Dimension:     XY
+Bounding box:  xmin: 2663.926 ymin: 16357.98 xmax: 56047.79 ymax: 50244.03
+Projected CRS: SVY21
+First 10 features:
+   GDO_GID MSLINK MAPID              COSTAL_NAM                       geometry
+1        1      1     0                 Linkway POLYGON ((14362.86 32307.49...
+2        2      3     0                 SENTOSA POLYGON ((25683.97 26236.91...
+3        3      5     0          PULAU SARIMBUN POLYGON ((11471.97 46273.01...
+4        4      6     0           PULAU SAMULUN POLYGON ((12602.3 32061.35,...
+5        5      7     0 SINGAPORE - MAIN ISLAND POLYGON ((17915.53 46770.73...
+6        6      8     0            PULAU KEPPEL POLYGON ((25606.84 27481.21...
+7        7      9     0             PULAU BRANI POLYGON ((27778.17 27321.28...
+8        8     10     0                   ISLET POLYGON ((25874.11 26121.48...
+9        9     11     0           PULAU PALAWAN POLYGON ((25937.33 25797.66...
+10      10     12     0                   ISLET POLYGON ((27459.33 24854.08...</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>mpsz_sf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 323 features and 15 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: 2667.538 ymin: 15748.72 xmax: 56396.44 ymax: 50256.33
+Projected CRS: SVY21
+First 10 features:
+   OBJECTID SUBZONE_NO       SUBZONE_N SUBZONE_C CA_IND      PLN_AREA_N
+1         1          1    MARINA SOUTH    MSSZ01      Y    MARINA SOUTH
+2         2          1    PEARL'S HILL    OTSZ01      Y          OUTRAM
+3         3          3       BOAT QUAY    SRSZ03      Y SINGAPORE RIVER
+4         4          8  HENDERSON HILL    BMSZ08      N     BUKIT MERAH
+5         5          3         REDHILL    BMSZ03      N     BUKIT MERAH
+6         6          7  ALEXANDRA HILL    BMSZ07      N     BUKIT MERAH
+7         7          9   BUKIT HO SWEE    BMSZ09      N     BUKIT MERAH
+8         8          2     CLARKE QUAY    SRSZ02      Y SINGAPORE RIVER
+9         9         13 PASIR PANJANG 1    QTSZ13      N      QUEENSTOWN
+10       10          7       QUEENSWAY    QTSZ07      N      QUEENSTOWN
+   PLN_AREA_C       REGION_N REGION_C          INC_CRC FMEL_UPD_D   X_ADDR
+1          MS CENTRAL REGION       CR 5ED7EB253F99252E 2014-12-05 31595.84
+2          OT CENTRAL REGION       CR 8C7149B9EB32EEFC 2014-12-05 28679.06
+3          SR CENTRAL REGION       CR C35FEFF02B13E0E5 2014-12-05 29654.96
+4          BM CENTRAL REGION       CR 3775D82C5DDBEFBD 2014-12-05 26782.83
+5          BM CENTRAL REGION       CR 85D9ABEF0A40678F 2014-12-05 26201.96
+6          BM CENTRAL REGION       CR 9D286521EF5E3B59 2014-12-05 25358.82
+7          BM CENTRAL REGION       CR 7839A8577144EFE2 2014-12-05 27680.06
+8          SR CENTRAL REGION       CR 48661DC0FBA09F7A 2014-12-05 29253.21
+9          QT CENTRAL REGION       CR 1F721290C421BFAB 2014-12-05 22077.34
+10         QT CENTRAL REGION       CR 3580D2AFFBEE914C 2014-12-05 24168.31
+     Y_ADDR SHAPE_Leng SHAPE_Area                       geometry
+1  29220.19   5267.381  1630379.3 MULTIPOLYGON (((31495.56 30...
+2  29782.05   3506.107   559816.2 MULTIPOLYGON (((29092.28 30...
+3  29974.66   1740.926   160807.5 MULTIPOLYGON (((29932.33 29...
+4  29933.77   3313.625   595428.9 MULTIPOLYGON (((27131.28 30...
+5  30005.70   2825.594   387429.4 MULTIPOLYGON (((26451.03 30...
+6  29991.38   4428.913  1030378.8 MULTIPOLYGON (((25899.7 297...
+7  30230.86   3275.312   551732.0 MULTIPOLYGON (((27746.95 30...
+8  30222.86   2208.619   290184.7 MULTIPOLYGON (((29351.26 29...
+9  29893.78   6571.323  1084792.3 MULTIPOLYGON (((20996.49 30...
+10 30104.18   3454.239   631644.3 MULTIPOLYGON (((24472.11 29...</code></pre>
+</div>
+</div>
+<section id="these-geospatial-data-uses-an-svy21-projection-system." class="level2">
+<h2 class="anchored" data-anchor-id="these-geospatial-data-uses-an-svy21-projection-system.">These geospatial data uses an SVY21 projection system.</h2>
+
+
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

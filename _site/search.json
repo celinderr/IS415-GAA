@@ -7,13 +7,6 @@
     "text": "About this site\n\n1 + 1\n\n[1] 2"
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "IS415-GAA",
-    "section": "",
-    "text": "Welcome to IS415 Geospatial Analytics and Applications;\nThis is my course website for my exercises."
-  },
-  {
     "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html",
     "href": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html",
     "title": "Hands-on Exercise 1: Geospatial Data Wrangling with R",
@@ -168,6 +161,76 @@
     "text": "Instead of creating small multiple choropleth map, you can also use selection funtion to map spatial objects meeting the selection criterion.\n\ntm_shape(mpsz_pop2020[mpsz_pop2020$REGION_N==\"CENTRAL REGION\", ])+\n  tm_fill(\"DEPENDENCY\", \n          style = \"quantile\", \n          palette = \"Blues\", \n          legend.hist = TRUE, \n          legend.is.portrait = TRUE,\n          legend.hist.z = 0.1) +\n  tm_layout(legend.outside = TRUE,\n            legend.height = 0.45, \n            legend.width = 5.0,\n            legend.position = c(\"right\", \"bottom\"),\n            frame = FALSE) +\n  tm_borders(alpha = 0.5)"
   },
   {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04.html",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04.html",
+    "title": "Hands-on Exercise 4: 1st Order Spatial Point Patterns Analysis Methods",
+    "section": "",
+    "text": "pacman::p_load(maptools, sf, raster, spatstat, tmap)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04.html#these-geospatial-data-uses-an-svy21-projection-system.",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04.html#these-geospatial-data-uses-an-svy21-projection-system.",
+    "title": "Hands-on Exercise 4: 1st Order Spatial Point Patterns Analysis Methods",
+    "section": "These geospatial data uses an SVY21 projection system.",
+    "text": "These geospatial data uses an SVY21 projection system."
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html",
+    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html",
+    "title": "In-class Exercise 2: Data Wrangling with R",
+    "section": "",
+    "text": "pacman::p_load(tidyverse, sf, funModeling)"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#the-geoboundaries-data-set",
+    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#the-geoboundaries-data-set",
+    "title": "In-class Exercise 2: Data Wrangling with R",
+    "section": "The geoBoundaries data set",
+    "text": "The geoBoundaries data set\n\ngeoNGA <- st_read(\"data/geospatial/\",\n               layer = \"geoBoundaries-NGA-ADM2\") %>%\n  st_transform(crs = 26392)\n\nReading layer `geoBoundaries-NGA-ADM2' from data source \n  `C:\\celinderr\\IS415-GAA\\In-class_Ex\\In-class_Ex02\\data\\geospatial' \n  using driver `ESRI Shapefile'\nSimple feature collection with 774 features and 6 fields\nGeometry type: MULTIPOLYGON\nDimension:     XY\nBounding box:  xmin: 2.668534 ymin: 4.273007 xmax: 14.67882 ymax: 13.89442\nGeodetic CRS:  WGS 84"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#the-nga-data-set",
+    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#the-nga-data-set",
+    "title": "In-class Exercise 2: Data Wrangling with R",
+    "section": "The NGA data set",
+    "text": "The NGA data set\n\nNGA <- st_read(\"data/geospatial/\",\n               layer = \"nga_admbnda_adm2_osgof_20190417\") %>%\n  st_transform(crs = 26392)\n\nReading layer `nga_admbnda_adm2_osgof_20190417' from data source \n  `C:\\celinderr\\IS415-GAA\\In-class_Ex\\In-class_Ex02\\data\\geospatial' \n  using driver `ESRI Shapefile'\nSimple feature collection with 774 features and 16 fields\nGeometry type: MULTIPOLYGON\nDimension:     XY\nBounding box:  xmin: 2.668534 ymin: 4.273007 xmax: 14.67882 ymax: 13.89442\nGeodetic CRS:  WGS 84\n\n\nBy examining both sf dataframe closely, we notice that NGA provide both LGA and state information. Hence, NGA data.frame will be used for the subsequent processing."
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#excluding-redundant-fields",
+    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#excluding-redundant-fields",
+    "title": "In-class Exercise 2: Data Wrangling with R",
+    "section": "Excluding redundant fields",
+    "text": "Excluding redundant fields\n\nselect() of dplyr (to retain column 3, 4, 8, 9)\n\nNGA <- NGA %>%\n  select(c(3:4, 8:9))"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#checking-for-duplicate-name",
+    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#checking-for-duplicate-name",
+    "title": "In-class Exercise 2: Data Wrangling with R",
+    "section": "Checking for Duplicate Name",
+    "text": "Checking for Duplicate Name\n\nduplicate() of Base R (to flag out duplicated LGA names)\n\nNGA$ADM2_EN[duplicated(NGA$ADM2_EN)==TRUE]\n\n[1] \"Bassa\"    \"Ifelodun\" \"Irepodun\" \"Nasarawa\" \"Obi\"      \"Surulere\"\n\n\n\nThe printout above shows that there are 6 LGAs with the same name. A Google search using the coordinates showed that there are LGAs with the same name but are located in different states. For instances, there is a Bassa LGA in Kogi State and a Bassa LGA in Plateau State.\n\n\nLet us correct these errors by using the code chunk below.\n\nNGA$ADM2_EN[94] <- \"Bassa, Kogi\"\nNGA$ADM2_EN[95] <- \"Bassa, Plateau\"\nNGA$ADM2_EN[304] <- \"Ifelodun, Kwara\"\nNGA$ADM2_EN[305] <- \"Ifelodun, Osun\"\nNGA$ADM2_EN[355] <- \"Irepodun, Kwara\"\nNGA$ADM2_EN[356] <- \"Irepodun, Osun\"\nNGA$ADM2_EN[519] <- \"Nasarawa, Kano\"\nNGA$ADM2_EN[520] <- \"Nasarawa, Nasarawa\"\nNGA$ADM2_EN[546] <- \"Obi, Benue\"\nNGA$ADM2_EN[547] <- \"Obi, Nasarawa\"\nNGA$ADM2_EN[693] <- \"Surulere, Lagos\"\nNGA$ADM2_EN[694] <- \"Surulere, Oyo\"\n\n\n\nConfirm that duplicated name issue address\n\nNGA$ADM2_EN[duplicated(NGA$ADM2_EN)==TRUE]\n\ncharacter(0)"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#extracting-water-point-data",
+    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#extracting-water-point-data",
+    "title": "In-class Exercise 2: Data Wrangling with R",
+    "section": "Extracting Water Point Data",
+    "text": "Extracting Water Point Data\n\nExtracting functional water point\n\nwp_functional <- wp_sf_nga %>%\n  filter(status_clean %in%\n           c(\"Functional\",\n             \"Functional but not in use\",\n             \"Functional but needs repair\"))\n\n\n\nExtracting non-functional water point\n\nwp_nonfunctional <- wp_sf_nga %>%\n  filter(status_clean %in%\n           c(\"Abandoned/Decommissioned\",\n             \"Abandoned\",\n             \"Non-Functional due to dry season\",\n             \"Non-Functional\",\n             \"Non functional due to dry season\"))\n\n\n\nExtracting water point with unknown status\n\nwp_unknown <- wp_sf_nga %>%\n  filter(status_clean == \"unknown\")\n\n\n\nPerform a quick EDA on derived sf data.frames\n\n freq(data = wp_functional,\n     input = 'status_clean')\n\n\n\n\n                 status_clean frequency percentage cumulative_perc\n1                  Functional     45883      87.99           87.99\n2 Functional but needs repair      4579       8.78           96.77\n3   Functional but not in use      1686       3.23          100.00\n\n\n\nfreq(data = wp_nonfunctional,\n     input = 'status_clean')\n\n\n\n\n                      status_clean frequency percentage cumulative_perc\n1                   Non-Functional     29385      91.25           91.25\n2 Non-Functional due to dry season      2403       7.46           98.71\n3         Abandoned/Decommissioned       234       0.73           99.44\n4                        Abandoned       175       0.54           99.98\n5 Non functional due to dry season         7       0.02          100.00\n\n\n\nfreq(data = wp_unknown,\n     input = 'status_clean')\n\n\n\n\n  status_clean frequency percentage cumulative_perc\n1      unknown     10656        100             100\n\n\n\n\nPerforming Point-in-Polygon Count\n\nFind out number of total, functional, non-functional and unknown water points in each LGA.\n\n1) st_intersects() of sf_package (identifies functional water points in each LGA)\n\n\n2) length() (to calculate number of functional water points that fall inside each LGA)\n\nNGA_wp <- NGA %>% \n  mutate(`total_wp` = lengths(\n    st_intersects(NGA, wp_sf_nga))) %>%\n  mutate(`wp_functional` = lengths(\n    st_intersects(NGA, wp_functional))) %>%\n  mutate(`wp_nonfunctional` = lengths(\n    st_intersects(NGA, wp_nonfunctional))) %>%\n  mutate(`wp_unknown` = lengths(\n    st_intersects(NGA, wp_unknown)))"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#visualising-attributes-by-using-statistical-graphs",
+    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#visualising-attributes-by-using-statistical-graphs",
+    "title": "In-class Exercise 2: Data Wrangling with R",
+    "section": "Visualising attributes by using statistical graphs",
+    "text": "Visualising attributes by using statistical graphs\n\nggplot2 package (to reveal distribution of total water points by LGA in histogram)\n\nggplot(data = NGA_wp,\n       aes(x = total_wp)) + \n  geom_histogram(bins=20,\n                 color=\"black\",\n                 fill=\"light blue\") +\n  geom_vline(aes(xintercept=mean(\n    total_wp, na.rm=T)),\n             color=\"red\", \n             linetype=\"dashed\", \n             linewidth=0.8) +\n  ggtitle(\"Distribution of total water points by LGA\") +\n  xlab(\"No. of water points\") +\n  ylab(\"No. of\\nLGAs\") +\n  theme(axis.title.y=element_text(angle = 0))"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#saving-the-analytical-data-in-rds-format",
+    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#saving-the-analytical-data-in-rds-format",
+    "title": "In-class Exercise 2: Data Wrangling with R",
+    "section": "Saving the analytical data in rds format",
+    "text": "Saving the analytical data in rds format\n\nTo retain the sf object structure for subsequent analysis, it is recommended to save the sf data.frame into rds format.\n\nwrite_rds() of readr package (to export an sf data.frame into rds format)\n\nwrite_rds(NGA_wp, \"data/rds/NGA_wp.rds\")"
+  },
+  {
     "objectID": "In-class_Ex/In-class_Ex03/In-class_Ex03.html",
     "href": "In-class_Ex/In-class_Ex03/In-class_Ex03.html",
     "title": "In-class Exercise 3: Analytical Mapping",
@@ -238,41 +301,6 @@
     "text": "Recode LGAs with zero water point into NA\n\nNGA_wp <- NGA_wp %>%\n  mutate(wp_functional = na_if(\n    total_wp, total_wp < 0))"
   },
   {
-    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#the-nga-data-set",
-    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#the-nga-data-set",
-    "title": "In-class Exercise 2: Data Wrangling with R",
-    "section": "The NGA data set",
-    "text": "The NGA data set\n\n\nReading layer `nga_admbnda_adm2_osgof_20190417' from data source \n  `C:\\celinderr\\IS415-GAA\\In-class_Ex\\In-class_Ex02\\data\\geospatial' \n  using driver `ESRI Shapefile'\nSimple feature collection with 774 features and 16 fields\nGeometry type: MULTIPOLYGON\nDimension:     XY\nBounding box:  xmin: 2.668534 ymin: 4.273007 xmax: 14.67882 ymax: 13.89442\nGeodetic CRS:  WGS 84"
-  },
-  {
-    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#write-the-extracted-data-into-rds-format",
-    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#write-the-extracted-data-into-rds-format",
-    "title": "In-class Exercise 2: Data Wrangling with R",
-    "section": "Write the extracted data into rds format",
-    "text": "Write the extracted data into rds format"
-  },
-  {
-    "objectID": "In-class_Ex/In-class_Ex04/In-In-class_Ex04.html",
-    "href": "In-class_Ex/In-class_Ex04/In-In-class_Ex04.html",
-    "title": "In Class Exercise 4: 2nd Order Spatial Point Patterns Analysis Methods",
-    "section": "",
-    "text": "Loading the Packages\n\n\n\n\n\nImporting the Data\n\n\nReading layer `child-care-services-geojson' from data source \n  `C:\\celinderr\\IS415-GAA\\In-class_Ex\\In-class_Ex04\\data\\child-care-services-geojson.geojson' \n  using driver `GeoJSON'\nSimple feature collection with 1545 features and 2 fields\nGeometry type: POINT\nDimension:     XYZ\nBounding box:  xmin: 103.6824 ymin: 1.248403 xmax: 103.9897 ymax: 1.462134\nz_range:       zmin: 0 zmax: 0\nGeodetic CRS:  WGS 84\n\n\n\n\nReading layer `CostalOutline' from data source \n  `C:\\celinderr\\IS415-GAA\\In-class_Ex\\In-class_Ex04\\data' using driver `ESRI Shapefile'\nSimple feature collection with 60 features and 4 fields\nGeometry type: POLYGON\nDimension:     XY\nBounding box:  xmin: 2663.926 ymin: 16357.98 xmax: 56047.79 ymax: 50244.03\nProjected CRS: SVY21\n\n\n\n\nReading layer `MP14_SUBZONE_WEB_PL' from data source \n  `C:\\celinderr\\IS415-GAA\\In-class_Ex\\In-class_Ex04\\data' using driver `ESRI Shapefile'\nSimple feature collection with 323 features and 15 fields\nGeometry type: MULTIPOLYGON\nDimension:     XY\nBounding box:  xmin: 2667.538 ymin: 15748.72 xmax: 56396.44 ymax: 50256.33\nProjected CRS: SVY21\n\n\n\n\nMapping the geospatial data sets"
-  },
-  {
-    "objectID": "In-class_Ex/In-class_Ex05/data/stores.html",
-    "href": "In-class_Ex/In-class_Ex05/data/stores.html",
-    "title": "IS415_GAA",
-    "section": "",
-    "text": "<!DOCTYPE qgis PUBLIC ‘http://mrcc.com/qgis.dtd’ ‘SYSTEM’>     \n\n\n        0 0     false"
-  },
-  {
-    "objectID": "In-class_Ex/In-class_Ex05/data/study_area.html",
-    "href": "In-class_Ex/In-class_Ex05/data/study_area.html",
-    "title": "IS415_GAA",
-    "section": "",
-    "text": "<!DOCTYPE qgis PUBLIC ‘http://mrcc.com/qgis.dtd’ ‘SYSTEM’>     dataset\n\n\n        0 0     false"
-  },
-  {
     "objectID": "In-class_Ex/In-class_Ex04/In-In-class_Ex04.html#set-tmode-to-plotting",
     "href": "In-class_Ex/In-class_Ex04/In-In-class_Ex04.html#set-tmode-to-plotting",
     "title": "In Class Exercise 4: 2nd Order Spatial Point Patterns Analysis Methods",
@@ -294,17 +322,38 @@
     "text": "Converting sf data frames to sp’s Spatial* class\n\n\n\n\n\nclass       : SpatialPointsDataFrame \nfeatures    : 1545 \nextent      : 11203.01, 45404.24, 25667.6, 49300.88  (xmin, xmax, ymin, ymax)\ncrs         : +proj=tmerc +lat_0=1.36666666666667 +lon_0=103.833333333333 +k=1 +x_0=28001.642 +y_0=38744.572 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs \nvariables   : 2\nnames       :    Name,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           Description \nmin values  :   kml_1, <center><table><tr><th colspan='2' align='center'><em>Attributes</em></th></tr><tr bgcolor=\"#E3E3F3\"> <th>ADDRESSBLOCKHOUSENUMBER</th> <td></td> </tr><tr bgcolor=\"\"> <th>ADDRESSBUILDINGNAME</th> <td></td> </tr><tr bgcolor=\"#E3E3F3\"> <th>ADDRESSPOSTALCODE</th> <td>018989</td> </tr><tr bgcolor=\"\"> <th>ADDRESSSTREETNAME</th> <td>1, MARINA BOULEVARD, #B1 - 01, ONE MARINA BOULEVARD, SINGAPORE 018989</td> </tr><tr bgcolor=\"#E3E3F3\"> <th>ADDRESSTYPE</th> <td></td> </tr><tr bgcolor=\"\"> <th>DESCRIPTION</th> <td></td> </tr><tr bgcolor=\"#E3E3F3\"> <th>HYPERLINK</th> <td></td> </tr><tr bgcolor=\"\"> <th>LANDXADDRESSPOINT</th> <td>0</td> </tr><tr bgcolor=\"#E3E3F3\"> <th>LANDYADDRESSPOINT</th> <td>0</td> </tr><tr bgcolor=\"\"> <th>NAME</th> <td>THE LITTLE SKOOL-HOUSE INTERNATIONAL PTE. LTD.</td> </tr><tr bgcolor=\"#E3E3F3\"> <th>PHOTOURL</th> <td></td> </tr><tr bgcolor=\"\"> <th>ADDRESSFLOORNUMBER</th> <td></td> </tr><tr bgcolor=\"#E3E3F3\"> <th>INC_CRC</th> <td>08F73931F4A691F4</td> </tr><tr bgcolor=\"\"> <th>FMEL_UPD_D</th> <td>20200826094036</td> </tr><tr bgcolor=\"#E3E3F3\"> <th>ADDRESSUNITNUMBER</th> <td></td> </tr></table></center> \nmax values  : kml_999,                  <center><table><tr><th colspan='2' align='center'><em>Attributes</em></th></tr><tr bgcolor=\"#E3E3F3\"> <th>ADDRESSBLOCKHOUSENUMBER</th> <td></td> </tr><tr bgcolor=\"\"> <th>ADDRESSBUILDINGNAME</th> <td></td> </tr><tr bgcolor=\"#E3E3F3\"> <th>ADDRESSPOSTALCODE</th> <td>829646</td> </tr><tr bgcolor=\"\"> <th>ADDRESSSTREETNAME</th> <td>200, PONGGOL SEVENTEENTH AVENUE, SINGAPORE 829646</td> </tr><tr bgcolor=\"#E3E3F3\"> <th>ADDRESSTYPE</th> <td></td> </tr><tr bgcolor=\"\"> <th>DESCRIPTION</th> <td>Child Care Services</td> </tr><tr bgcolor=\"#E3E3F3\"> <th>HYPERLINK</th> <td></td> </tr><tr bgcolor=\"\"> <th>LANDXADDRESSPOINT</th> <td>0</td> </tr><tr bgcolor=\"#E3E3F3\"> <th>LANDYADDRESSPOINT</th> <td>0</td> </tr><tr bgcolor=\"\"> <th>NAME</th> <td>RAFFLES KIDZ @ PUNGGOL PTE LTD</td> </tr><tr bgcolor=\"#E3E3F3\"> <th>PHOTOURL</th> <td></td> </tr><tr bgcolor=\"\"> <th>ADDRESSFLOORNUMBER</th> <td></td> </tr><tr bgcolor=\"#E3E3F3\"> <th>INC_CRC</th> <td>379D017BF244B0FA</td> </tr><tr bgcolor=\"\"> <th>FMEL_UPD_D</th> <td>20200826094036</td> </tr><tr bgcolor=\"#E3E3F3\"> <th>ADDRESSUNITNUMBER</th> <td></td> </tr></table></center>"
   },
   {
-    "objectID": "In-class_Ex/In-class_Ex05/In-In-class_Ex05.html",
-    "href": "In-class_Ex/In-class_Ex05/In-In-class_Ex05.html",
-    "title": "In-class Exercise 5",
+    "objectID": "In-class_Ex/In-class_Ex05/data/stores.html",
+    "href": "In-class_Ex/In-class_Ex05/data/stores.html",
+    "title": "IS415_GAA",
     "section": "",
-    "text": "#Load Packages\n\npacman::p_load(tidyverse, tmap, sf, sfdep)\n\n#Importing Data `{r} studyArea <- st_read(dsn = \"data\",                      layer = \"study_area\") %>%         st_transform(crs = 3829)\n\nstores <- st_read(dsn = \"data\",\n                  layer = \"stores\") %>%\n              st_transform(crs = 3829)\n\nReading layer `stores' from data source \n  `C:\\celinderr\\IS415-GAA\\In-class_Ex\\In-class_Ex05\\data' using driver `ESRI Shapefile'\nSimple feature collection with 1409 features and 4 fields\nGeometry type: POINT\nDimension:     XY\nBounding box:  xmin: 121.4902 ymin: 25.01257 xmax: 121.5874 ymax: 25.08557\nGeodetic CRS:  TWD97\n\n\n\nstudyArea <- st_read(dsn = \"data\",\n                  layer = \"study_area\") %>%\n              st_transform(crs = 3829)\n\nReading layer `study_area' from data source \n  `C:\\celinderr\\IS415-GAA\\In-class_Ex\\In-class_Ex05\\data' using driver `ESRI Shapefile'\nSimple feature collection with 7 features and 7 fields\nGeometry type: POLYGON\nDimension:     XY\nBounding box:  xmin: 121.4836 ymin: 25.00776 xmax: 121.592 ymax: 25.09288\nGeodetic CRS:  TWD97\n\n\n\nVisualising the sf layers\n\ntmap_mode(\"view\")\n\ntmap mode set to interactive viewing\n\ntm_shape(studyArea) +\n  tm_polygons() +\ntm_shape(stores) +\n  tm_dots(col = \"Name\", \n          size = 0.01,\n          border.col = \"black\", \n          border.lwd = 0.5) + \n  tm_view(set.zoom.limits = c(12,16))\n\n\n\n\n\n\n\n\nLocal Colocation Quotients (LCLQ)\n\nnb <- include_self(\n  st_knn(st_geometry(stores, 6)))\n\nwt <- st_kernel_weights(nb,\n                        stores,\n                        \"gaussian\",\n                        adaptive = TRUE)\n\n\nFamilyMart <- stores %>%\n  filter(Name == \"Family Mart\")\nA <- FamilyMart$Name\n\nSevenEleven <- stores %>%\n  filter(Name == \"7-Eleven\")\nB <- SevenEleven$Name\n\n\nLCLQ <- local_colocation(A, B, nb, wt, 49)\nLCLQ_stores <- cbind(stores, LCLQ)\n\n\ntmap_mode(\"view\")\n\ntmap mode set to interactive viewing"
+    "text": "<!DOCTYPE qgis PUBLIC ‘http://mrcc.com/qgis.dtd’ ‘SYSTEM’>     \n\n\n        0 0     false"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex05/data/study_area.html",
+    "href": "In-class_Ex/In-class_Ex05/data/study_area.html",
+    "title": "IS415_GAA",
+    "section": "",
+    "text": "<!DOCTYPE qgis PUBLIC ‘http://mrcc.com/qgis.dtd’ ‘SYSTEM’>     dataset\n\n\n        0 0     false"
   },
   {
     "objectID": "In-class_Ex/In-class_Ex05/In-class_Ex05.html",
     "href": "In-class_Ex/In-class_Ex05/In-class_Ex05.html",
     "title": "In-class Exercise 5",
     "section": "",
-    "text": "#Load Packages\n\npacman::p_load(tidyverse, tmap, sf, sfdep)\n\n#Importing Data `{r} studyArea <- st_read(dsn = \"data\",                      layer = \"study_area\") %>%         st_transform(crs = 3829)\n\nstores <- st_read(dsn = \"data\",\n                  layer = \"stores\") %>%\n              st_transform(crs = 3829)\n\nReading layer `stores' from data source \n  `C:\\celinderr\\IS415-GAA\\In-class_Ex\\In-class_Ex05\\data' using driver `ESRI Shapefile'\nSimple feature collection with 1409 features and 4 fields\nGeometry type: POINT\nDimension:     XY\nBounding box:  xmin: 121.4902 ymin: 25.01257 xmax: 121.5874 ymax: 25.08557\nGeodetic CRS:  TWD97\n\n\n\nstudyArea <- st_read(dsn = \"data\",\n                  layer = \"study_area\") %>%\n              st_transform(crs = 3829)\n\nReading layer `study_area' from data source \n  `C:\\celinderr\\IS415-GAA\\In-class_Ex\\In-class_Ex05\\data' using driver `ESRI Shapefile'\nSimple feature collection with 7 features and 7 fields\nGeometry type: POLYGON\nDimension:     XY\nBounding box:  xmin: 121.4836 ymin: 25.00776 xmax: 121.592 ymax: 25.09288\nGeodetic CRS:  TWD97\n\n\n\nVisualising the sf layers\n\ntmap_mode(\"view\")\n\ntmap mode set to interactive viewing\n\ntm_shape(studyArea) +\n  tm_polygons() +\ntm_shape(stores) +\n  tm_dots(col = \"Name\", \n          size = 0.01,\n          border.col = \"black\", \n          border.lwd = 0.5) + \n  tm_view(set.zoom.limits = c(12,16))\n\n\n\n\n\n\n\n\nLocal Colocation Quotients (LCLQ)\n\nnb <- include_self(\n  st_knn(st_geometry(stores, 6)))\n\nwt <- st_kernel_weights(nb,\n                        stores,\n                        \"gaussian\",\n                        adaptive = TRUE)\n\n\nFamilyMart <- stores %>%\n  filter(Name == \"Family Mart\")\nA <- FamilyMart$Name\n\nSevenEleven <- stores %>%\n  filter(Name == \"7-Eleven\")\nB <- SevenEleven$Name\n\n\nLCLQ <- local_colocation(A, B, nb, wt, 49)\nLCLQ_stores <- cbind(stores, LCLQ)\n\n\ntmap_mode(\"view\")\n\ntmap mode set to interactive viewing"
+    "text": "#Load Packages\n\npacman::p_load(tidyverse, tmap, sf, sfdep)\n\n#Importing Data `{r} studyArea <- st_read(dsn = \"data\",                      layer = \"study_area\") %>%         st_transform(crs = 3829)\n\nstores <- st_read(dsn = \"data\",\n                  layer = \"stores\") %>%\n              st_transform(crs = 3829)\n\nReading layer `stores' from data source \n  `C:\\celinderr\\IS415-GAA\\In-class_Ex\\In-class_Ex05\\data' using driver `ESRI Shapefile'\nSimple feature collection with 1409 features and 4 fields\nGeometry type: POINT\nDimension:     XY\nBounding box:  xmin: 121.4902 ymin: 25.01257 xmax: 121.5874 ymax: 25.08557\nGeodetic CRS:  TWD97\n\n\n\nstudyArea <- st_read(dsn = \"data\", \n                 layer=\"study_area\") %>%\n  st_transform(crs = 3829)\n\nReading layer `study_area' from data source \n  `C:\\celinderr\\IS415-GAA\\In-class_Ex\\In-class_Ex05\\data' using driver `ESRI Shapefile'\nSimple feature collection with 7 features and 7 fields\nGeometry type: POLYGON\nDimension:     XY\nBounding box:  xmin: 121.4836 ymin: 25.00776 xmax: 121.592 ymax: 25.09288\nGeodetic CRS:  TWD97\n\n\n\nVisualising the sf layers\n\ntmap_mode(\"view\")\n\ntmap mode set to interactive viewing\n\ntm_shape(studyArea) +\n  tm_polygons() +\ntm_shape(stores) +\n  tm_dots(col = \"Name\", \n          size = 0.01,\n          border.col = \"black\", \n          border.lwd = 0.5) + \n  tm_view(set.zoom.limits = c(12,16))\n\n\n\n\n\n\n\n\nLocal Colocation Quotients (LCLQ)\n\nnb <- include_self(\n  st_knn(st_geometry(stores, 6)))\n\nwt <- st_kernel_weights(nb,\n                        stores,\n                        \"gaussian\",\n                        adaptive = TRUE)\n\n\nFamilyMart <- stores %>%\n  filter(Name == \"Family Mart\")\nA <- FamilyMart$Name\n\nSevenEleven <- stores %>%\n  filter(Name == \"7-Eleven\")\nB <- SevenEleven$Name\n\n\nLCLQ <- local_colocation(A, B, nb, wt, 49)\nLCLQ_stores <- cbind(stores, LCLQ)\n\n\ntmap_mode(\"view\")\n\ntmap mode set to interactive viewing\n\ntm_shape(studyArea) +\n  tm_polygons() +\ntm_shape(LCLQ_stores)+ \n  tm_dots(col = \"X7.Eleven\",\n             size = 0.01,\n             border.col = \"black\",\n             border.lwd = 0.5) +\n  tm_view(set.zoom.limits = c(12, 16))"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "IS415-GAA",
+    "section": "",
+    "text": "Welcome to IS415 Geospatial Analytics and Applications;\nThis is my course website for my exercises."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html",
+    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html",
+    "title": "Take Home Exercise 1",
+    "section": "",
+    "text": "Introduction\n\n\nThis analysis aims to analyse the geographical distribution of functional and non-functional water points and their co-locations in Osun State, Nigeria. Furthermore, with the findings generated, draw statistical conclusions.\n\n\nData\nThe following data sets will be used in the analysis:\n\nAspatial\nWater Point Data | Format: csv | WPdx Data Repository\n\n\nGeospatial\nState boundary GIS data of Nigeria | Format: Shapefile | geoBoundaries\n\n\n\nInstall and load packages\n\npacman::p_load(tidyverse, tmap, sf, sfdep, funModeling)"
   }
 ]

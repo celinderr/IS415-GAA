@@ -1,4 +1,25 @@
 ---
 title: "Take Home Exercise 1"
-subtitle: "Discovering geographical distribution of functional and non-functional water states in Osun State, Nigeria"
 ---
+
+# Introduction
+
+# This analysis aims to analyse the geographical distribution of functional and non-functional water points and their co-locations in Osun State, Nigeria. Furthermore, with the findings generated, draw statistical conclusions.
+
+# Data
+
+The following data sets will be used in the analysis:
+
+### Aspatial
+
+Water Point Data \| Format: csv \| WPdx Data Repository
+
+### Geospatial
+
+State boundary GIS data of Nigeria \| Format: Shapefile \| geoBoundaries
+
+# Install and load packages
+
+```{r}
+pacman::p_load(tidyverse, tmap, sf, sfdep, funModeling) 
+```
