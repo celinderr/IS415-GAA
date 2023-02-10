@@ -2,23 +2,28 @@
 title: "In-class Exercise 5"
 ---
 
-#Load PAcakages
+#Load Packages
+
 ```{r}
 pacman::p_load(tidyverse, tmap, sf, sfdep)
 ```
 
-#Importing Data
-````{r}
-studyArea <- st_read(dsn = "data",
-                     layer = "study_area") %>%
-        st_transform(crs = 3829)
-```
+#Importing Data \``{r} studyArea <- st_read(dsn = "data",                      layer = "study_area") %>%         st_transform(crs = 3829)`
+
 ```{r}
 stores <- st_read(dsn = "data",
                   layer = "stores") %>%
               st_transform(crs = 3829)
 ```
+
+```{r}
+studyArea <- st_read(dsn = "data", 
+                 layer="study_area") %>%
+  st_transform(crs = 3829)
+```
+
 # Visualising the sf layers
+
 ```{r}
 tmap_mode("view")
 tm_shape(studyArea) +
@@ -30,7 +35,9 @@ tm_shape(stores) +
           border.lwd = 0.5) + 
   tm_view(set.zoom.limits = c(12,16))
 ```
+
 # Local Colocation Quotients (LCLQ)
+
 ```{r}
 nb <- include_self(
   st_knn(st_geometry(stores, 6)))
@@ -40,6 +47,7 @@ wt <- st_kernel_weights(nb,
                         "gaussian",
                         adaptive = TRUE)
 ```
+
 ```{r}
 FamilyMart <- stores %>%
   filter(Name == "Family Mart")
@@ -54,8 +62,15 @@ B <- SevenEleven$Name
 LCLQ <- local_colocation(A, B, nb, wt, 49)
 LCLQ_stores <- cbind(stores, LCLQ)
 ```
+
 ```{r}
 tmap_mode("view")
-
+tm_shape(studyArea) +
+  tm_polygons() +
+tm_shape(LCLQ_stores)+ 
+  tm_dots(col = "X7.Eleven",
+             size = 0.01,
+             border.col = "black",
+             border.lwd = 0.5) +
+  tm_view(set.zoom.limits = c(12, 16))
 ```
-
