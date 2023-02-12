@@ -229,6 +229,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#geospatial" id="toc-geospatial" class="nav-link" data-scroll-target="#geospatial">Geospatial</a></li>
   </ul></li>
   <li><a href="#install-and-load-packages" id="toc-install-and-load-packages" class="nav-link" data-scroll-target="#install-and-load-packages">Install and load packages</a></li>
+  <li><a href="#data-import" id="toc-data-import" class="nav-link" data-scroll-target="#data-import">Data Import</a>
+  <ul class="collapse">
+  <li><a href="#the-nga-dataset" id="toc-the-nga-dataset" class="nav-link" data-scroll-target="#the-nga-dataset">The NGA dataset</a></li>
+  <li><a href="#the-water-point-data" id="toc-the-water-point-data" class="nav-link" data-scroll-target="#the-water-point-data">The Water Point data</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -275,8 +280,53 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, tmap, sf, sfdep, funModeling) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+<section id="data-import" class="level1">
+<h1>Data Import</h1>
+<section id="the-nga-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="the-nga-dataset">The NGA dataset</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>NGA <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">"data/geospatial/"</span>,</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">layer =</span> <span class="st">"nga_admbnda_adm2_osgof_20190417"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">26392</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Reading layer `nga_admbnda_adm2_osgof_20190417' from data source 
+  `C:\celinderr\IS415-GAA\Take-home_Ex\Take-home_Ex01\data\geospatial' 
+  using driver `ESRI Shapefile'
+Simple feature collection with 774 features and 16 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: 2.668534 ymin: 4.273007 xmax: 14.67882 ymax: 13.89442
+Geodetic CRS:  WGS 84</code></pre>
+</div>
+</div>
+</section>
+<section id="the-water-point-data" class="level2">
+<h2 class="anchored" data-anchor-id="the-water-point-data">The Water Point data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>wp_nga <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/aspatial/Water_Point_Data_Exchange_-_Plus__WPdx__.csv"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">#clean_country_name</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"Nigeria"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 426774 Columns: 74
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (46): #source, #report_date, #status_id, #water_source_clean, #water_sou...
+dbl (23): row_id, #lat_deg, #lon_deg, #install_year, #fecal_coliform_value, ...
+lgl  (5): #rehab_year, #rehabilitator, is_urban, latest_record, is_duplicate
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

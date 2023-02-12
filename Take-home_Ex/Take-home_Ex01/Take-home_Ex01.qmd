@@ -23,3 +23,17 @@ State boundary GIS data of Nigeria \| Format: Shapefile \| geoBoundaries
 ```{r}
 pacman::p_load(tidyverse, tmap, sf, sfdep, funModeling) 
 ```
+
+# Data Import
+## The NGA dataset
+```{r}
+NGA <- st_read("data/geospatial/",
+               layer = "nga_admbnda_adm2_osgof_20190417") %>%
+  st_transform(crs = 26392)
+```
+
+## The Water Point data
+```{r}
+wp_nga <- read_csv("data/aspatial/Water_Point_Data_Exchange_-_Plus__WPdx__.csv") %>%
+  filter(`#clean_country_name` == "Nigeria")
+```
