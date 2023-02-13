@@ -5,15 +5,15 @@ website:
   title: "IS415_GAA"
   navbar:
     left:
-      - text: "Hand-on Exercise"
+      - text: "Hands-on Exercise"
         menu: 
-          - text: "Hand-on Exercise 1"
+          - text: "Hands-on Exercise 1"
             href: "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html"
-          - text: "Hand-on Exercise 2"
+          - text: "Hands-on Exercise 2"
             href: "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html"
-          - text: "Hand-on Exercise 3"
+          - text: "Hands-on Exercise 3"
             href: "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html"
-          - text: "Hand-on Exercise 4"
+          - text: "Hands-on Exercise 4"
             href: "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04.html"
             
       - text: "In-class Exercise"
@@ -29,6 +29,7 @@ website:
       - text: "Take Home Exercise"
         menu:
          - text: "Take Home Exercise 1"
+           href: "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html"
         
     right:
       - href: index.qmd
