@@ -1,0 +1,71 @@
+---
+title: "In-class Exercise 6: Spatial Weights and Applications"
+---
+
+```{r}
+pacman::p_load(sf, tmap , tidyverse, sfdep, dplyr)
+```
+
+# Importing geospatial data
+
+```{r}
+hunan_sf <- st_read("data/geospatial",
+            layer = "Hunan")
+```
+
+# Importing attribute data
+
+```{r}
+hunan_2012 <- read_csv("./data/aspatial/Hunan_2012.csv")
+```
+
+# Combine by using left join
+
+```{r} 
+hunan_GDPPC <- left_join(hunan_sf, hunan_2012)%>%
+  select(1:4, 7, 15)
+```
+
+# Plotting a chropleth map 
+
+```{r}
+tmap_mode("plot")
+tm_shape(hunan_GDPPC)+
+  tm_fill("GDPPC", 
+          style = "quantile", 
+          palette = "Blues", 
+          title = "GDPPC") +
+  tm_layout(main.title = "Distribution of GDP per capita by distribution)",
+            main.title.position = "center",
+            main.title.size = 1,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            legend.outside = FALSE,
+            legend.position = c("right", "bottom"),
+            frame = FALSE) +
+  tm_borders(alpha = 0.5)
+```
+# Identify area neighbours
+
+## Contiguity Neighbours Method
+
+### st_contiguity() (to derive a contiguity neighcor by using Queen's method)
+
+```{r}
+cn_queen <- hunan_GDPPC %>%
+    mutate(nb = st_contiguity(geometry),
+                .before = 1)
+```
+
+# Computing contiguity weights
+geo <- sf
+## Contiguity weights: Queen's method
+
+```{r}
+wm_q <- hunan_GDPPC %>%
+  mutate(nb = st_contiguity(geometry),
+         wt = st_weights(nb),
+         .before = 1)
+```
+
+    

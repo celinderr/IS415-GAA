@@ -47,7 +47,7 @@ wp_nga$Geometry = st_as_sfc(wp_nga$`New Georeferenced Column`)
 wp_nga
 ```
 
-#### Step 2: Convert tibble.data.frame into an sf object by using st_sf().  \*\*include referencing system of data into sf object
+#### Step 2: Convert tibble.data.frame into an sf object by using st_sf(). \*\*include referencing system of data into sf object
 
 ```{r}
 wp_sf <- st_sf(wp_nga, crs=4326)
@@ -65,12 +65,13 @@ wp_sf <- wp_sf %>%
 
 ## Excluding redundant fields
 
-### select() of dplyr  (to retain column 3, 4, 8, 9)
+### select() of dplyr (to retain column 3, 4, 8, 9)
 
 ```{r}
 NGA <- NGA %>%
   select(c(3:4, 8:9))
 ```
+
 ## Checking for Duplicate Name
 
 ### duplicate() of Base R (to flag out duplicated LGA names)
@@ -78,6 +79,7 @@ NGA <- NGA %>%
 ```{r}
 NGA$ADM2_EN[duplicated(NGA$ADM2_EN)==TRUE]
 ```
+
 ##### The printout above shows that there are 6 LGAs with the same name. A Google search using the coordinates showed that there are LGAs with the same name but are located in different states. For instances, there is a Bassa LGA in Kogi State and a Bassa LGA in Plateau State.
 
 ##### Let us correct these errors by using the code chunk below.
@@ -98,9 +100,11 @@ NGA$ADM2_EN[694] <- "Surulere, Oyo"
 ```
 
 #### Confirm that duplicated name issue address
+
 ```{r}
 NGA$ADM2_EN[duplicated(NGA$ADM2_EN)==TRUE]
 ```
+
 # Data Wrangling for Water Point Data
 
 ### freq() of funModeling (to reveal distribution of water point statuses visually)
@@ -110,7 +114,7 @@ freq(data = wp_sf,
      input = '#status_clean')
 ```
 
-#### 9 classes in status_clean 
+#### 9 classes in status_clean
 
 ### rename() of dplyr package (to rename column from #status_clean to status_clean for easier handling)
 
@@ -125,6 +129,7 @@ wp_sf_nga <- wp_sf %>%
   mutate(status_clean = replace_na(
     status_clean, "unknown"))
 ```
+
 ## Extracting Water Point Data
 
 ### Extracting functional water point
@@ -155,17 +160,19 @@ wp_nonfunctional <- wp_sf_nga %>%
 wp_unknown <- wp_sf_nga %>%
   filter(status_clean == "unknown")
 ```
- 
-### Perform a quick EDA on derived sf data.frames 
+
+### Perform a quick EDA on derived sf data.frames
 
 ```{r}
  freq(data = wp_functional,
      input = 'status_clean')
 ```
+
 ```{r}
 freq(data = wp_nonfunctional,
      input = 'status_clean')
 ```
+
 ```{r}
 freq(data = wp_unknown,
      input = 'status_clean')
@@ -173,7 +180,7 @@ freq(data = wp_unknown,
 
 ### Performing Point-in-Polygon Count
 
-#### Find out number of total, functional, non-functional and unknown water points in each LGA. 
+#### Find out number of total, functional, non-functional and unknown water points in each LGA.
 
 ##### 1) st_intersects() of sf_package (identifies functional water points in each LGA)
 
@@ -211,6 +218,7 @@ ggplot(data = NGA_wp,
   ylab("No. of\nLGAs") +
   theme(axis.title.y=element_text(angle = 0))
 ```
+
 ## Saving the analytical data in rds format
 
 ### To retain the sf object structure for subsequent analysis, it is recommended to save the sf data.frame into rds format.
