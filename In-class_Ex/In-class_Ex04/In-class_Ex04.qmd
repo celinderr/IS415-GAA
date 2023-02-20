@@ -53,7 +53,7 @@ tmap_mode('plot')
 ## Converting sf data frames to sp's Spatial\* class
 
 ```{r}
-childcare <- as_Spatial(childcare)
+childcare <- as_Spatial(childcare_sf)
 mpsz <- as_Spatial(mpsz_sf)
 sg <- as_Spatial(sg_sf)
 ```

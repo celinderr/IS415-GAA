@@ -1,0 +1,177 @@
+---
+title: "In-class Ex 7"
+---
+
+```{r}
+pacman::p_load(tidyverse,tmap,sf,sfdep)
+```
+
+# Importing geospatial data
+
+```{r}
+hunan_sf <- st_read("data/geospatial",
+            layer = "Hunan")
+```
+
+# Importing attribute data
+
+```{r}
+hunan_2012 <- read_csv("./data/aspatial/Hunan_2012.csv")
+```
+
+# Combine by using left join
+
+```{r}
+hunan_GDPPC <- left_join(hunan_sf, hunan_2012)%>%
+  select(1:4, 7, 15)
+```
+
+```{r}
+tmap_mode("plot")
+tm_shape(hunan_GDPPC)+
+  tm_fill("GDPPC", 
+          style = "quantile", 
+          palette = "Blues", 
+          title = "GDPPC") +
+  tm_layout(main.title = "Distribution of GDP per capita by distribution)",
+            main.title.position = "center",
+            main.title.size = 1,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            legend.outside = FALSE,
+            legend.position = c("right", "bottom"),
+            frame = FALSE) +
+  tm_borders(alpha = 0.5)
+```
+
+## Contiguity weights: Queen's method
+
+```{r}
+wm_q <- hunan_GDPPC %>%
+  mutate(nb = st_contiguity(geometry),
+         wt = st_weights(nb),
+         .before = 1)
+```
+
+## Performing Global Moran'I Permutation Test
+
+### To make sure your work is reproducible, if it involves simulation, please make sure you do set.seed(). Everytime it runs, result will vary.
+
+```{r}
+set.seed(1234)
+```
+
+::: {style="font-size:1.5em"}
+```{r}
+global_moran_perm(wm_q$GDPPC,
+                  wm_q$nb,
+                  wm_q$wt,
+                nsim = 99)
+```
+:::
+
+# Computing Global Moran'I
+
+```{r}
+moranI <- global_moran(wm_q$GDPPC,
+                       wm_q$nb,
+                       wm_q$wt)
+```
+
+::: \# Performing Global Moran'I Test
+
+```{r}
+global_moran_test(wm_q$GDPPC,
+                  wm_q$nb,
+                  wm_q$wt)
+```
+
+# Computing Local Moran'I
+
+::: style="font-size: 1.5em"}
+
+```{r}
+lisa <- wm_q %>%
+  mutate(local_moran = local_moran(
+    GDPPC, nb, wt, nsim = 99),
+      .before = 1) %>%
+  unnest(local_moran)
+lisa
+```
+
+### It is a list hence you need to unnest to use it for mapping.
+
+## mean and pysal should be the ame in general
+
+## pysal is a python library that does the same thing
+
+## for take-home exercise, can just stay with mean
+
+## for take-home, not required to do lisa, only do hot and cold spot
+
+::: \# Visualising local Moran'I ::: style="font-size: 1.5em"}
+
+```{r}
+lisa_sig <- lisa %>%
+  filter(p_ii < 0.05)
+tmap_mode("plot")
+tm_shape(lisa) + 
+  tm_polygons() +
+  tm_borders(alpha = 0.5) +
+tm_shape(lisa_sig) +
+  tm_fill("mean") +
+  tm_borders(alpha = 0.4)
+```
+
+:::
+
+## Visualising p-value of local Moran'I
+
+```{r}
+tmap_mode("plot")
+tm_shape(lisa) + 
+  tm_fill("mean") +
+  tm_borders(alpha = 0.4)
+```
+
+## Visualising local Moran's I and p-value
+
+# Hot spot and cold spot Area analysis
+
+## Computing Local Moran's I
+
+```{r}
+HCSA <- wm_q %>%
+  mutate(local_Gi = local_gstar_perm(
+    GDPPC, nb, wt, nsim = 99),
+      .before = 1) %>%
+    unnest(local_Gi)
+HCSA
+```
+
+## Visualising Gi
+
+```{r}
+tmap_mode("view")
+#view will be interactive, plot will be fixed
+tm_shape(HCSA) +
+  tm_fill("gi_star") +
+  tm_borders(alpha=0.5) +
+  tm_view(set.zoom.limits = c(6,8))
+```
+
+## Visualising p-value of HCSA
+
+```{r}
+tmap_mode("plot")
+tm_shape(HCSA) +
+  tm_fill("p_sim") +
+  tm_borders(alpha = 0.5)
+```
+
+### Part 3 of take-home exercise
+
+how to perform emerging hot and cold spot analysis
+
+1\) they are all in same csv structure but different files, so you need to bring csv file in, consolidate them into a single csv folder. format: (Year \| County \| GDPPC)
+

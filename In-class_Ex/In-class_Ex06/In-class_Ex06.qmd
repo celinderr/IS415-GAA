@@ -21,12 +21,12 @@ hunan_2012 <- read_csv("./data/aspatial/Hunan_2012.csv")
 
 # Combine by using left join
 
-```{r} 
+```{r}
 hunan_GDPPC <- left_join(hunan_sf, hunan_2012)%>%
   select(1:4, 7, 15)
 ```
 
-# Plotting a chropleth map 
+# Plotting a chropleth map
 
 ```{r}
 tmap_mode("plot")
@@ -45,6 +45,7 @@ tm_shape(hunan_GDPPC)+
             frame = FALSE) +
   tm_borders(alpha = 0.5)
 ```
+
 # Identify area neighbours
 
 ## Contiguity Neighbours Method
@@ -58,7 +59,7 @@ cn_queen <- hunan_GDPPC %>%
 ```
 
 # Computing contiguity weights
-geo <- sf
+
 ## Contiguity weights: Queen's method
 
 ```{r}
@@ -67,5 +68,3 @@ wm_q <- hunan_GDPPC %>%
          wt = st_weights(nb),
          .before = 1)
 ```
-
-    

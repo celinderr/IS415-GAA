@@ -1,0 +1,63 @@
+---
+title: "In Class 7: Emerging Cold and Hot Spots"
+---
+
+## Load Packages
+
+```{r}
+pacman:: p_load(tidyverse, sf, sfdep, plotly, tmap, zoo, plyr)
+```
+
+## Import Data
+
+```{r}
+hunan <- st_read("data/geospatial",
+            layer = "Hunan")
+```
+
+```{r}
+GDPPC <- read_csv("./data/aspatial/Hunan_GDPPC.csv")
+```
+
+```{r}
+hunan_GDPPC <- left_join(GDPPC, hunan)%>%
+  select(1:4, 7, 10)
+```
+
+## Creating a Time Series Cube
+
+```{r}
+GDPPC_st <- spacetime(GDPPC, hunan,
+                      .loc_col = "County",
+                      .time_col = "Year")
+GDPPC_st
+```
+
+:::
+
+```{r}
+GDPPC_nb <- GDPPC_st %>%
+  activate("geometry") %>%
+  mutate(
+    nb = include_self(st_contiguity(geometry)),
+    wt = st_weights(nb)
+        ) %>%
+  set_nbs("nb") %>%
+  set_wts("wt")
+```
+
+## Computing Gi
+
+```{r}
+gi_star <- GDPPC_nb %>%
+  group_by(Year) %>%
+  mutate(gi_star = local_gstar_perm(
+      GDPPC, nb, wt, nsim = 99)) %>%
+  tidyr::unnest(gi_star)
+
+```
+
+```{r}
+
+
+```
