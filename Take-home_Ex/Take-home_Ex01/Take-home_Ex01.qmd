@@ -354,18 +354,9 @@ non_functional_kde_wp_NGA_bw_raster
 tmap_mode('view')
 ```
 
-## ```{r}
-tm_basemap("OpenStreetMap") 
-tm_shape(gridded_kde_functional_wp_NGA.bw) + 
-  tm_raster("v") +
-  tm_layout(legend.position = c("right", "bottom"), frame = FALSE)
-```
+## `{r} tm_basemap("OpenStreetMap")  tm_shape(gridded_kde_functional_wp_NGA.bw) +    tm_raster("v") +   tm_layout(legend.position = c("right", "bottom"), frame = FALSE)`
 
-## ```{r}
-tm_shape(non_functional_kde_wp_NGA_bw_raster) + 
-  tm_raster("v") +
-  tm_layout(legend.position = c("right", "bottom"), frame = FALSE)
-```
+## `{r} tm_shape(non_functional_kde_wp_NGA_bw_raster) +    tm_raster("v") +   tm_layout(legend.position = c("right", "bottom"), frame = FALSE)`
 
 # Advantage of Kernel Density Maps over point maps
 
@@ -387,17 +378,9 @@ tm_shape(non_functional_kde_wp_NGA_bw_raster) +
 
 ## L-function estimation
 
-## ```{r}
-L_osun_functional = Lest(functional_wp_NGA_ppp.km, correctionc = "Ripley")
-plot(L_osun_functional, . -r ~ r, 
-     ylab= "L(d)-r", xlab = "d(m)")
-```
+## `{r} L_osun_functional = Lest(functional_wp_NGA_ppp.km, correctionc = "Ripley") plot(L_osun_functional, . -r ~ r,       ylab= "L(d)-r", xlab = "d(m)")`
 
-## ```{r}
-L_osun_non_functional = Lest(non_functional_wp_NGA_ppp.km, correctionc = "Ripley")
-plot(L_osun_non_functional, . -r ~ r, 
-     ylab= "L(d)-r", xlab = "d(m)")
-```
+## `{r} L_osun_non_functional = Lest(non_functional_wp_NGA_ppp.km, correctionc = "Ripley") plot(L_osun_non_functional, . -r ~ r,       ylab= "L(d)-r", xlab = "d(m)")`
 
 ## Performing Complete Spatial Randomness Test
 
@@ -411,13 +394,9 @@ plot(L_osun_non_functional, . -r ~ r,
 
 ## Hypothesis Testing (Functional Water Points)
 
-## ```{r}
-L_osun_functional <- envelope(functional_wp_NGA_ppp.km, Lest, nsim = 39, rank = 1, glocal=TRUE)
-```
+## `{r} L_osun_functional <- envelope(functional_wp_NGA_ppp.km, Lest, nsim = 39, rank = 1, glocal=TRUE)`
 
-#```{r}
-plot(L_osun_functional, . - r ~ r, xlab="d", ylab="L(d)-r")
-```
+\#`{r} plot(L_osun_functional, . - r ~ r, xlab="d", ylab="L(d)-r")`
 
 ## H0: The distribution of non-functional water points in Osun are randomly distributed.
 
@@ -429,13 +408,9 @@ plot(L_osun_functional, . - r ~ r, xlab="d", ylab="L(d)-r")
 
 ## Hypothesis Testing (Non Functional Water Points)
 
-## ```{r}
-L_osun_non_functional <- envelope(non_functional_wp_NGA_ppp.km, Lest, nsim = 39, rank = 1, glocal=TRUE)
-```
+## `{r} L_osun_non_functional <- envelope(non_functional_wp_NGA_ppp.km, Lest, nsim = 39, rank = 1, glocal=TRUE)`
 
-##```{r}
-plot(L_osun_non_functional, . - r ~ r, xlab="d", ylab="L(d)-r")
-```
+\##`{r} plot(L_osun_non_functional, . - r ~ r, xlab="d", ylab="L(d)-r")`
 
 ## Answer:
 
@@ -447,48 +422,21 @@ plot(L_osun_non_functional, . - r ~ r, xlab="d", ylab="L(d)-r")
 
 ## Visualising the sf layers
 
-##```{r}
-tmap_mode("view")
-tm_shape(wp_functional) +
-  tm_polygons() +
-tm_shape(wp_nonfunctional) +
-  tm_dots(col = "Name", 
-          size = 0.01,
-          border.col = "black", 
-          border.lwd = 0.5) + 
-  tm_view(set.zoom.limits = c(12,16))
-```
+\##`{r} tmap_mode("view") tm_shape(wp_functional) +   tm_polygons() + tm_shape(wp_nonfunctional) +   tm_dots(col = "Name",            size = 0.01,           border.col = "black",            border.lwd = 0.5) +    tm_view(set.zoom.limits = c(12,16))`
 
 # Local Colocation Quotients (LCLQ)
 
-##```{r}
-nb <- include_self(
-  st_knn(st_geometry(wp_nga, 31)))
+##\`\`\`{r} nb \<- include_self( st_knn(st_geometry(wp_nga, 31)))
 
-wt <- st_kernel_weights(nb,
-                        wp_nga,
-                        "gaussian",
-                        adaptive = TRUE)
-```
+wt \<- st_kernel_weights(nb, wp_nga, "gaussian", adaptive = TRUE)
 
-## ```{r}
-LCLQ <- local_colocation(wp_functional, wp_nonfunctional, nb, wt, 49)
-LCLQ_wp <- cbind(wp_nga, LCLQ)
-```
+    ## ```{r}
+    LCLQ <- local_colocation(wp_functional, wp_nonfunctional, nb, wt, 49)
+    LCLQ_wp <- cbind(wp_nga, LCLQ)
 
 ## Plot LCLQ values
 
-## ```{r}
-tmap_mode("view")
-tm_shape(wp_nga) +
-  tm_polygons() +
-tm_shape(LCLQ_wp)+ 
-  tm_dots(col = "Water Points",
-             size = 0.01,
-             border.col = "black",
-             border.lwd = 0.5) +
-  tm_view(set.zoom.limits = c(12, 16))
-```
+## `{r} tmap_mode("view") tm_shape(wp_nga) +   tm_polygons() + tm_shape(LCLQ_wp)+    tm_dots(col = "Water Points",              size = 0.01,              border.col = "black",              border.lwd = 0.5) +   tm_view(set.zoom.limits = c(12, 16))`
 
 ## Performing Complete Spatial Randomness Test
 
@@ -500,19 +448,11 @@ tm_shape(LCLQ_wp)+
 
 ## The null hypothesis will be rejected if p-value is smaller than alpha value of 0.001.
 
-## ```{r}
-L_osun_LCLQ = Lest(LCLQ_wp, correctionc = "Ripley")
-plot(L_osun_LCLQ, . -r ~ r, 
-     ylab= "L(d)-r", xlab = "d(m)")
-```
+## `{r} L_osun_LCLQ = Lest(LCLQ_wp, correctionc = "Ripley") plot(L_osun_LCLQ, . -r ~ r,       ylab= "L(d)-r", xlab = "d(m)")`
 
-## ```{r}
-L_osun_LCLQ <- envelope(LCLQ_wp, Lest, nsim = 39, rank = 1, glocal=TRUE)
-```
+## `{r} L_osun_LCLQ <- envelope(LCLQ_wp, Lest, nsim = 39, rank = 1, glocal=TRUE)`
 
-## ```{r}
-plot(L_osun_LCLQ, . - r ~ r, xlab="d", ylab="L(d)-r")
-```
+## `{r} plot(L_osun_LCLQ, . - r ~ r, xlab="d", ylab="L(d)-r")`
 
 # Answer:
 

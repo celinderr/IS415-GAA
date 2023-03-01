@@ -1,0 +1,244 @@
+---
+title: "Take Home Exercise 2"
+---
+
+# Introduction
+
+### In this study, we aim to undercover the spatio-temporal trends of COVID-19 vaccination in DKI Jakarta and the sub-districts to see their distribution across. A further analysis on how the distribution changed overtime will also be conducted.
+
+# Data
+
+### The following data will be used in the analysis.
+
+## Aspatial
+
+### Data Vaksinasi Berbasis Kelurahan (01 Juli 2021) \| Format: .xlsx \| Riwayat File Vaksinasi DKI Jakarta
+
+## Geospatial
+
+### BATAS_DESA_DESEMBER_2019_DUKCAPIL_DKI_JAKARTA \| Format: Shapefile \| Indonesia Geospatial portal
+
+# Install and load packages
+
+```{r}
+pacman::p_load(plyr , sf, tidyverse, readxl, tmap, maptools, kableExtra, janitor)
+```
+
+# Data Import
+
+## Geospatial Data
+
+```{r}
+jakarta_data <- st_read(dsn="data/geospatial",
+                        layer="BATAS_DESA_DESEMBER_2019_DUKCAPIL_DKI_JAKARTA")
+```
+
+### Data Wrangling
+
+#### Check for invalid geometries
+
+#### *Reference from senior sample submissions for code for this section, with credit to Megan's [**Take-Home Exercise 1: Analysing and Visualising Spatio-temporal Patterns of COVID-19 in DKI Jakarta, Indonesia**](https://is415-msty.netlify.app/posts/2021-09-10-take-home-exercise-1/)*
+
+```{r}
+length(which(st_is_valid(jakarta_data) == FALSE))
+```
+
+#### No invalid geometries
+
+#### Check for missing values
+
+```{r}
+jakarta_data[rowSums(is.na(jakarta_data))!=0,]
+```
+
+#### Remove missing fields
+
+```{r}
+jakarta_data <- na.omit(jakarta_data,c("DESA_KELUR"))
+```
+
+#### Check coordinate system of data
+
+```{r}
+st_crs(jakarta_data)
+```
+
+#### Note: WGS84 is not appropriate, have to change to national coordinate system of Indonesia -- DGN95
+
+```{r}
+jakarta_data <- st_transform(jakarta_data, 23845)
+```
+
+### Check if CRS changed
+
+```{r}
+st_crs(jakarta_data)
+```
+
+### Removing redundant data
+
+#### We are only interested in DKI Jakarta, hence we will be removing other islands or districts from the data.
+
+#### Since KAB-KOTA which is 'City' will be the best way to filter them, we take a look at the cities in this dataset.
+
+```{r}
+unique(jakarta_data$"KAB_KOTA")
+```
+
+#### Visualising to see all cities in this dataset
+
+```{r}
+tm_shape(jakarta_data) + 
+  tm_polygons("KAB_KOTA")
+```
+
+#### Removing redundant data
+
+```{r}
+jakarta_data <- filter(jakarta_data, KAB_KOTA != "KEPULAUAN SERIBU")
+```
+
+##### Note: reduced from 267 observations to 261 observations
+
+#### Retaining first 9 fields of jakarta_data as per assignment instructions
+
+```{r}
+jakarta_data <- jakarta_data[, 0:9]
+```
+
+##### Note: reduced to 10 variables
+
+### Translation of column names for ease of handling data
+
+#### Using rename() of dplyr package
+
+```{r}
+jakarta_data <- jakarta_data %>% 
+  dplyr::rename(
+    Object_ID=OBJECT_ID,
+    Province=PROVINSI, 
+    City=KAB_KOTA, 
+    District=KECAMATAN, 
+    Village_Code=KODE_DESA, 
+    Village=DESA, 
+    Sub_District=DESA_KELUR,
+    Code=KODE, 
+    Total_Population=JUMLAH_PEN
+    )
+```
+
+### Final visualisation of DKI Jakarta data
+
+```{r}
+tm_shape(jakarta_data) + 
+  tm_polygons("City")
+```
+
+## Aspatial Data
+
+```{r}
+july2021 <- read_xlsx("data/aspatial/Vaccination 01 Juli 2021 Jarkarta.xlsx")
+```
+
+## Aspatial Data Pre-processing Function
+```{r}
+# takes in an aspatial data filepath and returns a processed output
+aspatial_preprocess <- function(filepath){
+  # read xlsx file
+  result_file <- read_xlsx(filepath)
+  
+  # Create the Date Column
+  # the format of our files is: Vaccination DD MM YYYY Jarkarta
+  # Starting Point: Vaccination
+  # End Point: Jarkarta
+  # Use [1] to indicate first element in the list
+  # reference https://stackoverflow.com/questions/14249562/find-the-location-of-a-character-in-string
+  startpoint <- gregexpr(pattern="Vaccination", filepath)[[1]] + 12
+  endpoint <- gregexpr(pattern="Jarkarta", filepath)[[1]] - 2
+  result_file$Date <- substr(filepath, startpoint, endpoint)
+  
+  # Retain the Relevant Columns
+  result_file <- result_file %>% 
+    select("Date", 
+           "WILAYAH KOTA", 
+           "KECAMATAN", 
+           "KELURAHAN", 
+           "SASARAN", 
+           "BELUM VAKSIN")
+  return(result_file)
+}
+```
+
+## Feed files into preprocessing function
+
+```{r}
+# in the folder 'data/aspatial', find files with the extension '.xlsx' and add it to our fileslist 
+# the full.names=TRUE prepends the directory path to the file names, giving a relative file path - otherwise, only the file names (not the paths) would be returned 
+# reference: https://stat.ethz.ch/R-manual/R-devel/library/base/html/list.files.html
+fileslist <-list.files(path = "data/aspatial", pattern = "*.xlsx", full.names=TRUE)
+
+# afterwards, for every element in fileslist, apply aspatial_process function
+dflist <- lapply(seq_along(fileslist), function(x) aspatial_preprocess(fileslist[x]))
+```
+
+## Convert dflist into actual dataframe
+
+```{r}
+cases_jakarta <- ldply(dflist, data.frame)
+```
+
+#### Check cases_jakarta
+
+```{r}
+glimpse(cases_jakarta)
+```
+
+## Format Date Column
+
+```{r}
+# parses the 'Date' column into Month(Full Name)-YYYY datetime objects
+# reference: https://stackoverflow.com/questions/53380650/b-y-date-conversion-gives-na
+
+# locale="ind" means that the locale has been set as Indonesia
+Sys.setlocale(locale="ind")
+```
+
+```{r}
+cases_jakarta$Date <- c(cases_jakarta$Date) %>% 
+  as.Date(cases_jakarta$Date, format ="%d %B %Y")
+glimpse(cases_jakarta)
+```
+
+## Rename columns by translating them
+
+```{r}
+# renames the columns in the style New_Name = OLD_NAME
+cases_jakarta <- cases_jakarta %>% 
+  dplyr::rename(
+    Date=Date,
+    City=WILAYAH.KOTA,
+    District=KECAMATAN, 
+    Sub_District=KELURAHAN,
+    Target_Vaccine=SASARAN, 
+    Unvaccinated=BELUM.VAKSIN 
+    )
+```
+
+## Check for missing values
+```{r}
+# returns rows that contain NA values
+cases_jakarta[rowSums(is.na(cases_jakarta))!=0,]
+```
+## Remove missing values
+
+```{r}
+# removes rows that have an NA value in ID
+cases_jakarta <- na.omit(cases_jakarta,c("City"))
+```
+
+## Check for missing values again
+```{r}
+# returns rows that contain NA values
+cases_jakarta[rowSums(is.na(cases_jakarta))!=0,]
+```
+

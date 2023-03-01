@@ -1,0 +1,273 @@
+---
+title: "Hands-on Exercise 6: Spatial Weights and Applications"
+---
+
+# Load Packages
+
+```{r}
+pacman::p_load(sf, spdep, tmap, tidyverse, knitr)
+```
+
+# Importing Data
+
+## Import shapefile into R environment
+
+```{r}
+hunan <- st_read(dsn = "data/geospatial", 
+                 layer = "Hunan")
+```
+
+## Import csv into R environment
+
+```{r}
+hunan2012 <- read_csv("data/aspatial/Hunan_2012.csv")
+```
+
+# Performing relational join (to update attribute table of hunan's SpatialPolygonsDataFrame with attributes of hunan2012 dataframe)
+
+## left_join of dplyr() package
+
+```{r}
+hunan <- left_join(hunan,hunan2012)%>%
+  select(1:4, 7, 15)
+```
+
+# Visualising Regional Development Indicator
+
+## Prepare basemap and choropleth map to show distribution of GDPPC 2012
+
+## qtm() of tmap package
+
+```{r}
+basemap <- tm_shape(hunan) +
+  tm_polygons() +
+  tm_text("NAME_3", size=0.5)
+
+gdppc <- qtm(hunan, "GDPPC")
+tmap_arrange(basemap, gdppc, asp=1, ncol=2)
+```
+
+# Computing Contiguity Spatial Weights
+
+#### to compute conginuity weight matrices for study area;
+
+#### builds neighbour list based on regions with contiguous boundaries;
+
+#### you can pass a 'queen' argument that takes TRUE or FALSE as options
+
+#### poly2nb() of spdep package
+
+## Computing (QUEEN) contiguity based neighbours
+
+```{r}
+wm_q <- poly2nb(hunan, queen=TRUE)
+summary(wm_q)
+```
+
+#### Observation: 88 area units in Hunan, most connected unit has 11 neighbours, 2 area units with only 1 neighbour.
+
+### For each polygon in our polygon object, wm_q lists all the neighbouring polygons.
+
+### Eg. to see neighbours for the first polygon in the object:
+
+```{r}
+wm_q[[1]]
+```
+
+#### Observation: Polygon 1 has 5 neighbours. Numbers represent the polygon IDs as stored in hunan SpatialPolygonsDataFrame class
+
+### to retrieve county name of Polygon ID=1:
+
+```{r}
+hunan$County[1]
+```
+
+### to reveal county name of 5 neighbours:
+
+```{r}
+hunan$NAME_3[c(2,3,4,57,85)]
+```
+
+### to retrieve GDPPC of above 5 countries:
+
+```{r}
+nb1 <- wm_q[[1]]
+nb1 <- hunan$GDPPC[nb1]
+nb1
+```
+
+### to display the complete weight matrix (str())
+
+```{r}
+str(wm_q)
+```
+
+## Creating (ROOK) contiguity based neighbours
+
+### to compute ROOK contiguinity weight matrix
+
+```{r}
+wm_r <- poly2nb(hunan, queen=FALSE)
+summary(wm_r)
+```
+
+#### Observations: 88 area units in Hunan, most connected area unit has 10 neighbours, 2 units with only 1 neighbour
+
+## Visualising contiguity weights
+
+### A connectivity graph takes a point and displays a line to each neighbouring point.
+
+### Now is polygons form, so we will need to get the points in order to make the connectivity graphs.
+
+### Most typical method is polygon centroids, calculated in the sf package before moving onto the graphs
+
+## Getting latitude and longitude of polygon centroids
+
+### - Need points to associate with each polygon before making connectivity graph,
+
+### - Need coordinates in a separate data frame for this
+
+### - We will use a mapping function -- applies a given function to each element of a vector and returns a vector of the same length
+
+#### Input vector: geometry column of us.bound
+
+#### Function: st_centroid
+
+#### map_dbl of purrr package
+
+### To get longitude values -\> map st_centroid function over geometry column of us.bound and access longitude value through \[\] and 1. (First value in each centroid is the longitude)
+
+```{r}
+longitude <- map_dbl(hunan$geometry, ~st_centroid(.x)[[1]])
+```
+
+### Get latitude, the second value per each centroid
+
+```{r}
+latitude <- map_dbl(hunan$geometry, ~st_centroid(.x)[[2]])
+```
+
+## Use cbind to put latitude and longitude into the same object
+
+```{r}
+coords <- cbind(longitude, latitude)
+```
+
+### Check first few observations to see if things are formatted correctly
+
+```{r}
+head(coords)
+```
+
+# Plotting Queen contiguinity based neighbours map
+
+```{r}
+plot(hunan$geometry, border="lightgrey")
+plot(wm_q, coords, pch = 19, cex = 0.6, add = TRUE, col= "red")
+```
+
+# Plotting Rook contiguinity based neighbours map
+
+```{r}
+plot(hunan$geometry, border="lightgrey")
+plot(wm_r, coords, pch = 19, cex = 0.6, add = TRUE, col = "red")
+```
+
+# Plotting both Queen and Rook contiguinity based neighbours maps
+
+```{r}
+par(mfrow=c(1,2))
+plot(hunan$geometry, border="lightgrey")
+plot(wm_q, coords, pch = 19, cex = 0.6, add = TRUE, col= "red", main="Queen Contiguity")
+plot(hunan$geometry, border="lightgrey")
+plot(wm_r, coords, pch = 19, cex = 0.6, add = TRUE, col = "red", main="Rook Contiguity")
+# Computing distance based neighbours
+
+## Learn how to derive distance-based weight matrices using dnearneigh() of spdep package
+
+### This function identifies neighbours of region points by Euclidean distance with a distance band with lower d1= and upper d2= bounds controlled by the bounds= argument.
+
+### If unprojected coordinates are used and either specified in the coordinates object x or with x as a two column matric and longlat=TRUE, great circle distances in km will be calculated assuming WGS84 reference ellipsoid
+
+## Determine cut-off distance
+
+### Firstly, determine upper limit for distance band 
+
+#coords <- coordinates(hunan)
+k1 <- knn2nb(knearneigh(coords))
+k1dists <- unlist(nbdists(k1, coords, longlat = TRUE))
+summary(k1dists)
+#### Summary report shows that largest first nearest neighbour distance is 61.79km, hence, this upper threshold gives certainty that all units will have at least one neighbour
+
+## Computing fixed distance weight matric
+
+### Using dnearneigh
+
+wm_d62 <- dnearneigh(coords, 0, 62, longlat = TRUE)
+wm_d62
+## Using str() to display content of wm_d62 weight matrix
+
+str(wm_d62)
+## Using table() and card() of spdep to display structure of weight matrix
+
+table(hunan$County, card(wm_d62))
+n_comp <- n.comp.nb(wm_d62)
+n_comp$nc
+table(n_comp$comp.id)
+### Plotting fixed distance weight matric
+
+plot(hunan$geometry, border="lightgrey")
+plot(wm_d62, coords, add=TRUE)
+plot(k1, coords, add=TRUE, col="red", length=0.08)
+#### Note: Red lines show links of 1st neighbours and black lines show links of neighbours within the cut-off distance of 62km
+
+#### Alternatively, can plot both of them next to each other
+
+par(mfrow=c(1,2))
+plot(hunan$geometry, border="lightgrey")
+plot(k1, coords, add=TRUE, col="red", length=0.08, main="1st nearest neighbours")
+plot(hunan$geometry, border="lightgrey")
+plot(wm_d62, coords, add=TRUE, pch = 19, cex = 0.6, main="Distance link")
+### Computing adaptive distance weight matrix
+
+#### One of the characteristics of fixed distance weight matrix: more densely settled areas (usually the urban areas) tend to have more neighbours and less densely settled areas (usually the rural areas) tend to have lesser neighbours 
+
+#### Possible to control the number of neighbours directly using k-nearest neighbours, either accepting asymmetric neighbours or imposing symmetry
+
+knn6 <- knn2nb(knearneigh(coords, k=6))
+knn6
+### Display content by using str()
+
+str(knn6)
+### Plotting distance based neighbours
+
+plot(hunan$geometry, border="lightgrey")
+plot(knn6, coords, pch = 19, cex = 0.6, add = TRUE, col = "red")
+# Weights based on IDW
+
+## Using Inversed Distnce method
+
+### Firstly, compute distances between areas by using nbdists() of spdep
+
+dist <- nbdists(wm_q, coords, longlat = TRUE)
+ids <- lapply(dist, function(x) 1/(x))
+ids
+## Row-standardised weights matrix
+
+### Next, assign weights to each neighbouring polygon 
+### Each of them will be assigned equal weight (style="W"), accomplished by assigning the fraction 1/(#of neighbours) to each neighbouring county then summing the weight4ed income values.
+
+### Most intuitive but one drawback is that polygons along the edges of the study area will base their lagged values on fewer polygons thus potentially over- or under-estimating the true nature of the spatial autocorrelation in the data
+
+rswm_q <- nb2listw(wm_q, style="W", zero.policy = TRUE)
+rswm_q
+#### zero.policy=TRUE option allows for lists of non-neighbours
+
+#### Note: should be used with caution since the user may not be aware of missing neighbours in their dataset. However, a zero.policy of FALSE would return an error.
+
+### To see weight of first polygon's eight neighbours type 
+
+rswm_q$weights[10]
+```
+
+### Each neighbour is assigned a 0.125 of the total weight.
