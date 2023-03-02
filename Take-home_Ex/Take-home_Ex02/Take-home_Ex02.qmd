@@ -84,30 +84,6 @@ st_crs(jakarta_data)
 ```{r}
 unique(jakarta_data$"KAB_KOTA")
 ```
-
-#### Visualising to see all cities in this dataset
-
-```{r}
-tm_shape(jakarta_data) + 
-  tm_polygons("KAB_KOTA")
-```
-
-#### Removing redundant data
-
-```{r}
-jakarta_data <- filter(jakarta_data, KAB_KOTA != "KEPULAUAN SERIBU")
-```
-
-##### Note: reduced from 267 observations to 261 observations
-
-#### Retaining first 9 fields of jakarta_data as per assignment instructions
-
-```{r}
-jakarta_data <- jakarta_data[, 0:9]
-```
-
-##### Note: reduced to 10 variables
-
 ### Translation of column names for ease of handling data
 
 #### Using rename() of dplyr package
@@ -126,12 +102,36 @@ jakarta_data <- jakarta_data %>%
     Total_Population=JUMLAH_PEN
     )
 ```
+#### Visualising to see all cities in this dataset
+
+```{r}
+tm_shape(jakarta_data) + 
+  tm_polygons("Sub_District")
+```
+
+#### Removing redundant data
+
+```{r}
+jakarta_data <- filter(jakarta_data, City != "KEPULAUAN SERIBU")
+```
+
+##### Note: reduced from 267 observations to 261 observations
+
+#### Retaining first 9 fields of jakarta_data as per assignment instructions
+
+```{r}
+jakarta_data <- jakarta_data[, 0:9]
+```
+
+##### Note: reduced to 10 variables
+
+
 
 ### Final visualisation of DKI Jakarta data
 
 ```{r}
 tm_shape(jakarta_data) + 
-  tm_polygons("City")
+  tm_polygons("Sub_District")
 ```
 
 ## Aspatial Data
@@ -141,6 +141,7 @@ july2021 <- read_xlsx("data/aspatial/Vaccination 01 Juli 2021 Jarkarta.xlsx")
 ```
 
 ## Aspatial Data Pre-processing Function
+
 ```{r}
 # takes in an aspatial data filepath and returns a processed output
 aspatial_preprocess <- function(filepath){
@@ -208,37 +209,196 @@ cases_jakarta$Date <- c(cases_jakarta$Date) %>%
   as.Date(cases_jakarta$Date, format ="%d %B %Y")
 glimpse(cases_jakarta)
 ```
-
-## Rename columns by translating them
-
+## Renaming columns
 ```{r}
-# renames the columns in the style New_Name = OLD_NAME
-cases_jakarta <- cases_jakarta %>% 
-  dplyr::rename(
+cases_jakarta <- cases_jakarta %>%
+  rename(
     Date=Date,
-    City=WILAYAH.KOTA,
-    District=KECAMATAN, 
-    Sub_District=KELURAHAN,
-    Target_Vaccine=SASARAN, 
-    Unvaccinated=BELUM.VAKSIN 
-    )
+    City = WILAYAH.KOTA,
+    District = KECAMATAN,
+    Sub_District = KELURAHAN,
+    Target_vaccine = SASARAN,
+    Unvaccinated = BELUM.VAKSIN
+  )
 ```
-
-## Check for missing values
-```{r}
-# returns rows that contain NA values
-cases_jakarta[rowSums(is.na(cases_jakarta))!=0,]
-```
-## Remove missing values
+## Data Integration of Geospatial and Aspatial
 
 ```{r}
-# removes rows that have an NA value in ID
-cases_jakarta <- na.omit(cases_jakarta,c("City"))
+# checks for column names of the dataframes
+colnames(jakarta_data)
 ```
 
-## Check for missing values again
 ```{r}
-# returns rows that contain NA values
-cases_jakarta[rowSums(is.na(cases_jakarta))!=0,]
+colnames(cases_jakarta)
 ```
+
+```{r}
+# joins cases_jakarta to bd_jakarta based on Province, Sub_District and City
+combined_jakarta <- left_join(jakarta_data, cases_jakarta,
+                              by=c(
+                                "District"="District", 
+                                "Sub_District"="Sub_District",
+                                "City"="City")
+                              )
+```
+
+#### Now let's visualise subdistrict in terms of unvaccinated and target vaccine
+
+```{r}
+target_vaccine <- tm_shape(combined_jakarta) +
+  tm_borders(alpha = 0.5) +
+  tm_fill("Target_vaccine")
+
+not_vaccinated <- tm_shape(combined_jakarta) +
+  tm_borders(alpha = 0.5) +
+  tm_fill("Unvaccinated")
+
+tmap_arrange(target_vaccine, not_vaccinated)
+```
+
+### As shown above, there are grey areas in the map. These are missing values which might be caused by mismatched records from joining subdistricts/city from the 2 dataframes.
+
+## Correcting mismatched records
+
+## To find, we see what was in jakarta_data but not in cases_jakarta
+
+```{r}
+vaccine_subdistrict <- c(cases_jakarta$Sub_District)
+jakarta_subdistrict <- c(jakarta_data$Sub_District)
+
+unique(vaccine_subdistrict[!(vaccine_subdistrict %in% jakarta_subdistrict)])
+```
+
+```{r}
+unique(jakarta_subdistrict[!(jakarta_subdistrict %in% vaccine_subdistrict)])
+```
+
+## Let us visualise the mismatched records
+
+| Geospatial Data (jakarta_subdistrict) | Aspatial Data (vaccine_subdistrict) |
+|------------------------------------|------------------------------------|
+| BALEKAMBANG                           | BALE KAMBANG                        |
+| HALIM PERDANA KUSUMA                  | HALIM PERDANA KUSUMAH               |
+| JATIPULO                              | JATI PULO                           |
+| TENGAH                                | KAMPUNG TENGAH                      |
+| KRENDANG                              | KERENDANG                           |
+| KRAMATJATI                            | KRAMAT JATI                         |
+| PALMERIAN                             | PAL MERIAN                          |
+| PINANGRANTI                           | PINANG RANTI                        |
+| RAWAJATI                              | RAWA JATI                           |
+
+## Renaming mismatched records
+
+```{r}
+# where bd_jakarta is a mismatched value, replace with the correct value
+jakarta_data$Sub_District[jakarta_data$Sub_District == 'BALEKAMBANG'] <- 'BALE KAMBANG'
+jakarta_data$Sub_District[jakarta_data$Sub_District == 'HALIM PERDANA KUSUMA'] <- 'HALIM PERDANA KUSUMAH'
+jakarta_data$Sub_District[jakarta_data$Sub_District == 'JATIPULO'] <- 'JATI PULO'
+jakarta_data$Sub_District[jakarta_data$Sub_District == 'TENGAH'] <- 'KAMPUNG TENGAH'
+jakarta_data$Sub_District[jakarta_data$Sub_District == 'KRAMATJATI'] <- 'KRAMAT JATI'
+jakarta_data$Sub_District[jakarta_data$Sub_District == 'KRENDANG'] <- 'KERENDANG'
+jakarta_data$Sub_District[jakarta_data$Sub_District == 'PALMERIAM'] <- 'PAL MERIAM'
+jakarta_data$Sub_District[jakarta_data$Sub_District == 'PINANGRANTI'] <- 'PINANG RANTI'
+jakarta_data$Sub_District[jakarta_data$Sub_District == 'RAWAJATI'] <- 'RAWA JATI'
+```
+
+## Joining both dataframes by sub-district
+
+```{r}
+combined_jakarta <- left_join(jakarta_data, cases_jakarta,
+                          by=c("Sub_District" = "Sub_District"))
+```
+## Visualising data once again
+
+```{r}
+target_vaccine <- tm_shape(combined_jakarta) +
+  tm_borders(alpha = 0.5) +
+  tm_fill("Target_vaccine")
+
+not_vaccinated <- tm_shape(combined_jakarta) +
+  tm_borders(alpha = 0.5) +
+  tm_fill("Unvaccinated")
+
+tmap_arrange(target_vaccine, not_vaccinated)
+```
+
+## Calculations
+
+### Computation of Monthly Vaccination Rate
+
+```{r}
+vaccine_rate <- cases_jakarta %>%
+  inner_join(jakarta_data, by=c("Sub_District" = "Sub_District")) %>%
+  group_by(Sub_District, Date) %>%
+  summarise(`vaccination_rate` = (Target_vaccine - Unvaccinated)/Target_vaccine)
+```
+
+```{r}
+glimpse(vaccine_rate)
+```
+```{r}
+vaccine_rate_pivot <- vaccine_rate %>% ungroup() %>% pivot_wider(names_from = Date, values_from = vaccination_rate)
+
+```
+## Mapping Monthly Vaccination Rate
+
+#### Convert to sf dataframe first
+
+```{r}
+combined_jakarta <- st_as_sf(combined_jakarta)
+```
+
+````{r}
+vaccine_rate_pivot <- vaccine_rate_pivot %>% left_join(jakarta_data, by=c("Sub_District" = "Sub_District"))
+vaccine_rate_pivot <- st_as_sf(vaccine_rate_pivot)
+```
+
+### Create map helper function for recursive map plotting
+
+```{r}
+map_function <- function(df, varname) {
+tm_shape(df) +
+  tm_fill(varname,
+          style = "quantile",
+          palette = "Blues",
+          title = "Vaccination Rate") +
+  tm_layout(main.title = varname,
+            main.title.position = "center",
+            main.title.size = 1.2,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            frame = TRUE) +
+  tm_borders(alpha = 0.5) +
+  tm_compass(type = "8star", size = 2) +
+  tm_scale_bar() +
+  tm_grid(alpha = 0.2)
+}
+```
+
+### Executing the function
+
+```{r}
+tmap_mode("plot")
+tmap_arrange(map_function(vaccine_rate_pivot, "2021-07-01"),
+             map_function(vaccine_rate_pivot, "2021-08-01"),
+             map_function(vaccine_rate_pivot, "2021-09-01"),
+             map_function(vaccine_rate_pivot, "2021-10-01"))
+```
+```{r}
+tmap_arrange(map_function(vaccine_rate_pivot, "2021-11-01"),
+             map_function(vaccine_rate_pivot, "2021-12-01"),
+             map_function(vaccine_rate_pivot, "2022-01-01"),
+             map_function(vaccine_rate_pivot, "2022-02-01"))
+```
+```{r}
+tmap_arrange(map_function(vaccine_rate_pivot, "2022-03-01"),
+             map_function(vaccine_rate_pivot, "2022-04-01"),
+             map_function(vaccine_rate_pivot, "2022-05-01"),
+             map_function(vaccine_rate_pivot, "2022-06-01"))
+```
+## Spatial Pattern Analysis
+
+### As the palette darkens to a darker shade of blue, it shows a higher vaccination rate. With a varying shade of blue across the entire Jakarta region, it is observed that the vaccines administered were inconsistent -- some sub-districts with higher vaccination rates in the first few months of the study period did not maintain as high during later parts of the study period. This could be due to the fact that their citizens in that area have been vaccinated and hence, vaccination efforts are stronger in other sub-districts subsequently.
+
+# 10. Local GI* Analysis
 
