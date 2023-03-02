@@ -174,4 +174,3 @@ tm_shape(HCSA) +
 how to perform emerging hot and cold spot analysis
 
 1\) they are all in same csv structure but different files, so you need to bring csv file in, consolidate them into a single csv folder. format: (Year \| County \| GDPPC)
-
