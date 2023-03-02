@@ -21,7 +21,7 @@ title: "Take Home Exercise 2"
 # Install and load packages
 
 ```{r}
-pacman::p_load(plyr , sf, tidyverse, readxl, tmap, maptools, kableExtra, sfdep, spdep, plotly)
+pacman::p_load(plyr , sf, tidyverse, readxl, tmap, maptools, kableExtra, sfdep, spdep, plotly, zoo)
 ```
 
 # Data Import
@@ -30,7 +30,7 @@ pacman::p_load(plyr , sf, tidyverse, readxl, tmap, maptools, kableExtra, sfdep, 
 
 ```{r}
 jakarta_data <- st_read(dsn="data/geospatial",
-                        layer="BATAS_DESA_DESEMBER_2019_DUKCAPIL_DKI_JAKARTA")
+                              layer="BATAS_DESA_DESEMBER_2019_DUKCAPIL_DKI_JAKARTA")
 ```
 
 ## Data Wrangling
@@ -122,7 +122,7 @@ jakarta_data <- filter(jakarta_data, City != "KEPULAUAN SERIBU")
 #### Retaining first 9 fields of jakarta_data as per assignment instructions
 
 ```{r}
-jakarta_data <- jakarta_data[, 0:9]
+jakarta_data <- jakarta_data %>% select(1:9)
 ```
 
 ##### Note: reduced to 10 variables
@@ -135,10 +135,6 @@ tm_shape(jakarta_data) +
 ```
 
 ## Aspatial Data
-
-```{r}
-july2021 <- read_xlsx("data/aspatial/Vaccination 01 Juli 2021 Jarkarta.xlsx")
-```
 
 ## Aspatial Data Pre-processing Function
 
@@ -214,7 +210,7 @@ glimpse(cases_jakarta)
 
 ```{r}
 cases_jakarta <- cases_jakarta %>%
-  rename(
+  dplyr::rename(
     Date=Date,
     City = WILAYAH.KOTA,
     District = KECAMATAN,
@@ -224,6 +220,11 @@ cases_jakarta <- cases_jakarta %>%
   )
 ```
 
+## Removing redundant cities
+
+```{r}
+cases_jakarta <- filter(cases_jakarta, City != "KAB.ADM.KEP.SERIBU")
+```
 ## Data Integration of Geospatial and Aspatial
 
 ```{r}
@@ -341,373 +342,3 @@ vaccine_rate <- cases_jakarta %>%
 glimpse(vaccine_rate)
 ```
 
-```{r}
-vaccine_rate_pivot <- vaccine_rate %>% ungroup() %>% pivot_wider(names_from = Date, values_from = vaccination_rate)
-
-```
-
-## Mapping Monthly Vaccination Rate
-
-#### Convert to sf dataframe first
-
-```{r}
-combined_jakarta <- st_as_sf(combined_jakarta)
-```
-
-\``{r} vaccine_rate_pivot <- vaccine_rate_pivot %>% left_join(jakarta_data, by=c("Sub_District" = "Sub_District")) vaccine_rate_pivot <- st_as_sf(vaccine_rate_pivot)`
-
-### Create map helper function for recursive map plotting
-
-```{r}
-map_function <- function(df, varname) {
-tm_shape(df) +
-  tm_fill(varname,
-          style = "quantile",
-          palette = "Blues",
-          title = "Vaccination Rate") +
-  tm_layout(main.title = varname,
-            main.title.position = "center",
-            main.title.size = 1.2,
-            legend.height = 0.45, 
-            legend.width = 0.35,
-            frame = TRUE) +
-  tm_borders(alpha = 0.5) +
-  tm_compass(type = "8star", size = 2) +
-  tm_scale_bar() +
-  tm_grid(alpha = 0.2)
-}
-```
-
-### Executing the function
-
-```{r}
-tmap_mode("plot")
-tmap_arrange(map_function(vaccine_rate_pivot, "2021-07-01"),
-             map_function(vaccine_rate_pivot, "2021-08-01"),
-             map_function(vaccine_rate_pivot, "2021-09-01"),
-             map_function(vaccine_rate_pivot, "2021-10-01"))
-```
-
-```{r}
-tmap_arrange(map_function(vaccine_rate_pivot, "2021-11-01"),
-             map_function(vaccine_rate_pivot, "2021-12-01"),
-             map_function(vaccine_rate_pivot, "2022-01-01"),
-             map_function(vaccine_rate_pivot, "2022-02-01"))
-```
-
-```{r}
-tmap_arrange(map_function(vaccine_rate_pivot, "2022-03-01"),
-             map_function(vaccine_rate_pivot, "2022-04-01"),
-             map_function(vaccine_rate_pivot, "2022-05-01"),
-             map_function(vaccine_rate_pivot, "2022-06-01"))
-```
-
-## Spatial Pattern Analysis
-
-#### As the palette darkens to a darker shade of blue, it shows a higher vaccination rate. With a varying shade of blue across the entire Jakarta region, it is observed that the vaccines administered were inconsistent -- some sub-districts with higher vaccination rates in the first few months of the study period did not maintain as high during later parts of the study period. This could be due to the fact that their citizens in that area have been vaccinated and hence, vaccination efforts are stronger in other sub-districts subsequently.
-
-# 10. Local GI\* Analysis
-
-#### We will be conducting hotspot and coldspot analysis using G-statistics.
-
-#### The steps to this analysis are:
-
-#### 1) Derive spatial weight matrix
-
-#### 2) Compute Gi statistics
-
-#### 3) Mapping Gi statistics
-
-## Derive contiguity weights using Queen's method (sfdep() package)
-
-```{r}
-set.seed(1234)
-```
-
-```{r}
-wm_idw <- vaccine_rate_pivot %>%
-  mutate(nb = st_contiguity(geometry),
-         wts = st_inverse_distance(nb, geometry, scale = 1, alpha = 1),
-         .before = 1)
-```
-
-## Compute Gi\* values of vaccination rates for each month
-
-```{r}
-HCSA_july2021 <- wm_idw %>% 
-  mutate(local_Gi = local_gstar_perm(
-    `2021-07-01`, nb, wt, nsim = 99),
-         .before = 1) %>%
-  unnest(local_Gi)
-
-HCSA_aug2021 <- wm_idw %>% 
-  mutate(local_Gi = local_gstar_perm(
-    `2021-08-01`, nb, wt, nsim = 99),
-         .before = 1) %>%
-  unnest(local_Gi)
-
-HCSA_sept2021 <- wm_idw %>% 
-  mutate(local_Gi = local_gstar_perm(
-    `2021-09-01`, nb, wt, nsim = 99),
-         .before = 1) %>%
-  unnest(local_Gi)
-
-HCSA_oct2021 <- wm_idw %>% 
-  mutate(local_Gi = local_gstar_perm(
-    `2021-10-01`, nb, wt, nsim = 99),
-         .before = 1) %>%
-  unnest(local_Gi)
-
-HCSA_nov2021 <- wm_idw %>% 
-  mutate(local_Gi = local_gstar_perm(
-    `2021-11-01`, nb, wt, nsim = 99),
-         .before = 1) %>%
-  unnest(local_Gi)
-
-HCSA_dec2021 <- wm_idw %>% 
-  mutate(local_Gi = local_gstar_perm(
-    `2021-12-01`, nb, wt, nsim = 99),
-         .before = 1) %>%
-  unnest(local_Gi)
-
-HCSA_jan2022 <- wm_idw %>% 
-  mutate(local_Gi = local_gstar_perm(
-    `2022-01-01`, nb, wt, nsim = 99),
-         .before = 1) %>%
-  unnest(local_Gi)
-
-HCSA_feb2022 <- wm_idw %>% 
-  mutate(local_Gi = local_gstar_perm(
-    `2022-02-01`, nb, wt, nsim = 99),
-         .before = 1) %>%
-  unnest(local_Gi)
-
-HCSA_mar2022 <- wm_idw %>% 
-  mutate(local_Gi = local_gstar_perm(
-    `2022-03-01`, nb, wt, nsim = 99),
-         .before = 1) %>%
-  unnest(local_Gi)
-
-HCSA_april2022 <- wm_idw %>% 
-  mutate(local_Gi = local_gstar_perm(
-    `2022-04-01`, nb, wt, nsim = 99),
-         .before = 1) %>%
-  unnest(local_Gi)
-
-HCSA_may2022 <- wm_idw %>% 
-  mutate(local_Gi = local_gstar_perm(
-    `2022-05-01`, nb, wt, nsim = 99),
-         .before = 1) %>%
-  unnest(local_Gi)
-
-HCSA_june2022 <- wm_idw %>% 
-  mutate(local_Gi = local_gstar_perm(
-    `2022-06-01`, nb, wt, nsim = 99),
-         .before = 1) %>%
-  unnest(local_Gi)
-```
-
-## Create map objects of Gi\* map, then plot the map.
-
-#### For each map, only hot and cold spot areas are displyed. (p-value less than 0.05)
-
-```{r}
-#July 2021
-HCSA_july2021_sig <- HCSA_july2021  %>%
-  filter(p_sim < 0.05)
-
-HCSA_july2021_map <- tm_shape(HCSA_july2021) +
-                      tm_polygons() +
-                      tm_borders(alpha = 0.5) +
-                    tm_shape(HCSA_july2021_sig) +
-                      tm_fill("gi_star") + 
-                      tm_borders(alpha = 0.4) + 
-                      tm_layout(main.title = "July 2021")
-
-#Aug 2021
-HCSA_aug2021_sig <- HCSA_aug2021  %>%
-  filter(p_sim < 0.05)
-
-HCSA_aug2021_map <-tm_shape(HCSA_aug2021) +
-                      tm_polygons() +
-                      tm_borders(alpha = 0.5) +
-                    tm_shape(HCSA_aug2021_sig) +
-                      tm_fill("gi_star") + 
-                      tm_borders(alpha = 0.4) + 
-                      tm_layout(main.title = "Aug 2021")
-
-#Sept 2021
-HCSA_sept2021_sig <- HCSA_sept2021  %>%
-  filter(p_sim < 0.05)
-
-HCSA_sept2021_map <- tm_shape(HCSA_sept2021) +
-                      tm_polygons() +
-                      tm_borders(alpha = 0.5) +
-                    tm_shape(HCSA_sept2021_sig) +
-                      tm_fill("gi_star") + 
-                      tm_borders(alpha = 0.4) + 
-                      tm_layout(main.title = "Sept 2021")
-
-#Oct 2021
-HCSA_oct2021_sig <- HCSA_oct2021  %>%
-  filter(p_sim < 0.05)
-
-HCSA_oct2021_map <-tm_shape(HCSA_oct2021) +
-                    tm_polygons() +
-                    tm_borders(alpha = 0.5) +
-                  tm_shape(HCSA_oct2021_sig) +
-                    tm_fill("gi_star") + 
-                    tm_borders(alpha = 0.4) + 
-                      tm_layout(main.title = "Oct 2021")
-
-# Nov 2021
-HCSA_nov2021_sig <- HCSA_nov2021  %>%
-  filter(p_sim < 0.05)
-
-HCSA_nov2021_map <-tm_shape(HCSA_nov2021) +
-                    tm_polygons() +
-                    tm_borders(alpha = 0.5) +
-                  tm_shape(HCSA_nov2021_sig) +
-                    tm_fill("gi_star") + 
-                    tm_borders(alpha = 0.4) + 
-                      tm_layout(main.title = "Nov 2021")
-# Dec 2021
-HCSA_dec2021_sig <- HCSA_dec2021  %>%
-  filter(p_sim < 0.05)
-
-HCSA_dec2021_map <-tm_shape(HCSA_dec2021) +
-                  tm_polygons() +
-                  tm_borders(alpha = 0.5) +
-                tm_shape(HCSA_dec2021_sig) +
-                  tm_fill("gi_star") + 
-                  tm_borders(alpha = 0.4) + 
-                      tm_layout(main.title = "Dec 2021")
-
-# Jan 2022
-HCSA_jan2022_sig <- HCSA_jan2022  %>%
-  filter(p_sim < 0.05)
-
-HCSA_jan2022_map <- tm_shape(HCSA_jan2022) +
-                    tm_polygons() +
-                    tm_borders(alpha = 0.5) +
-                  tm_shape(HCSA_jan2022_sig) +
-                    tm_fill("gi_star") + 
-                    tm_borders(alpha = 0.4) + 
-                      tm_layout(main.title = "Jan 2022")
-
-# Fen 2022
-HCSA_feb2022_sig <- HCSA_feb2022  %>%
-  filter(p_sim < 0.05)
-
-HCSA_feb_2022_map <- tm_shape(HCSA_feb2022) +
-                      tm_polygons() +
-                      tm_borders(alpha = 0.5) +
-                    tm_shape(HCSA_feb2022_sig) +
-                      tm_fill("gi_star") + 
-                      tm_borders(alpha = 0.4) + 
-                      tm_layout(main.title = "Feb 2022")
-
-# Mar 2022
-HCSA_mar2022_sig <- HCSA_mar2022  %>%
-  filter(p_sim < 0.05)
-
-HCSA_mar2022_map <- tm_shape(HCSA_mar2022) +
-                      tm_polygons() +
-                      tm_borders(alpha = 0.5) +
-                    tm_shape(HCSA_mar2022_sig) +
-                      tm_fill("gi_star") + 
-                      tm_borders(alpha = 0.4) + 
-                      tm_layout(main.title = "Mar 2022")
-
-#April 2022
-HCSA_april2022_sig <- HCSA_april2022  %>%
-  filter(p_sim < 0.05)
-
-HCSA_april2022_map <- tm_shape(HCSA_april2022) +
-                        tm_polygons() +
-                        tm_borders(alpha = 0.5) +
-                      tm_shape(HCSA_april2022_sig) +
-                        tm_fill("gi_star") + 
-                        tm_borders(alpha = 0.4) + 
-                      tm_layout(main.title = "April 2022")
-
-# May 2022
-HCSA_may2022_sig <- HCSA_may2022  %>%
-  filter(p_sim < 0.05)
-
-HCSA_may2022_map <- tm_shape(HCSA_may2022) +
-                      tm_polygons() +
-                      tm_borders(alpha = 0.5) +
-                    tm_shape(HCSA_may2022_sig) +
-                      tm_fill("gi_star") + 
-                      tm_borders(alpha = 0.4) + 
-                      tm_layout(main.title = "May 2022")
-
-# June 2022
-HCSA_june2022_sig <- HCSA_june2022  %>%
-  filter(p_sim < 0.05)
-
-HCSA_june2022_map <- tm_shape(HCSA_june2022) +
-                      tm_polygons() +
-                      tm_borders(alpha = 0.5) +
-                    tm_shape(HCSA_june2022_sig) +
-                      tm_fill("gi_star") + 
-                      tm_borders(alpha = 0.4) + 
-                      tm_layout(main.title = "Jun 2022")
-```
-
-```{r}
-tmap_arrange(HCSA_july2021_map, HCSA_aug2021_map, HCSA_sept2021_map, HCSA_oct2021_map)
-```
-
-```{r}
-tmap_arrange(HCSA_mar2022_map, HCSA_april2022_map, HCSA_may2022_map, HCSA_june2022_map)
-```
-
-# Conclusion
-
-#### Hotspot areas shaded in green indicates subdistricts with high vaccination rates and coldspot areas indcates subdistricts with low vaccination rates. Hence, we can conclude there is an initial major hotspot.
-
-## Emerging Hotspot Analysis (EHSA)
-
-#### We will be conducting an EHSA on the monthly vaccination rates to see how hot and coldspots evolve over time.
-
-### Build a time series cube
-
-##### spacetime() of sfdep will be used to create a spatio-temporal cube
-
-```{r}
-vaccine_rate_st <- spacetime(vaccine_rate, jakarta_data,
-                             .loc_col = "Sub_District",
-                             .time_col = "Date")
-
-vaccine_rate_st
-```
-
-```{r}
-is_spacetime_cube(vaccine_rate_st)
-```
-#### The TRUE return confirms that vaccine_rate_st object is indeed an time-space cube.
-
-```{r}
-vaccine_rate_nb <- vaccine_rate_st %>%
-  activate("geometry") %>%
-  mutate(nb = include_self(st_contiguity(geometry)),
-         wt = st_inverse_distance(nb, geometry,
-                                  scale = 1,
-                                  alpha = 1),
-         .before = 1)
-```
-```{r}
-  set_nbs("nb") %>%
-  set_wts("wt")
-```
-
-
-```{r}
-gi_stars <- vaccine_rate_nb %>% 
-  group_by(Sub_District) %>% 
-  mutate(gi_star = local_gstar_perm(
-    vaccine_rate, nb, wt)) %>% 
-  tidyr::unnest(gi_star)
-```
