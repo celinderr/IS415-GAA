@@ -281,7 +281,7 @@ unique(jakarta_subdistrict[!(jakarta_subdistrict %in% vaccine_subdistrict)])
 ### Let us visualise the mismatched records
 
 | Geospatial Data (jakarta_subdistrict) | Aspatial Data (vaccine_subdistrict) |
-|------------------------------------|------------------------------------|
+|---------------------------------------|-------------------------------------|
 | BALEKAMBANG                           | BALE KAMBANG                        |
 | HALIM PERDANA KUSUMA                  | HALIM PERDANA KUSUMAH               |
 | JATIPULO                              | JATI PULO                           |
