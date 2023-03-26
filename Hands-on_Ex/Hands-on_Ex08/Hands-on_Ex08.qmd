@@ -139,11 +139,13 @@ ggarrange(AREA_SQM, AGE, PROX_CBD, PROX_CHILDCARE, PROX_ELDERLYCARE,
           PROX_PARK, PROX_PRIMARY_SCH, PROX_TOP_PRIMARY_SCH,  
           ncol = 3, nrow = 4)
 ```
+
 ## Drawing Statistical Point Map
 
 ```{r}
 tmap_mode("view")
 ```
+
 ```{r}
 tmap_options(check.and.fix = TRUE)
 ```
@@ -157,16 +159,19 @@ tm_shape(condo_resale.sf) +
           style="quantile") +
   tm_view(set.zoom.limits = c(11,14))
 ```
+
 ```{r}
 tmap_mode("plot")
 ```
+
 # Hedonic Price Modelling in R
 
-### Using lm() of base R to build hedonic price models 
+### Using lm() of base R to build hedonic price models
 
 ## Simple Linear Regression Method
 
 #### Independent variable: AREA_SQM
+
 #### Dependent variable: SELLING_PRICE
 
 ```{r}
@@ -176,6 +181,7 @@ condo.slr <- lm(formula=SELLING_PRICE ~ AREA_SQM, data = condo_resale.sf)
 ```{r}
 summary(condo.slr)
 ```
+
 ### Visualise best fit curve on scatter plot
 
 ```{r}
@@ -184,6 +190,7 @@ ggplot(data=condo_resale.sf,
   geom_point() +
   geom_smooth(method = lm)
 ```
+
 ### Observation: few statistical outlier with relatively high selling prices
 
 ## Multiple Linear Regression Method
@@ -194,7 +201,8 @@ ggplot(data=condo_resale.sf,
 corrplot::corrplot(cor(condo_resale[, 5:23]), diag = FALSE, order = "AOE",
          tl.pos = "td", tl.cex = 0.5, method = "number", type = "upper")
 ```
-###  Building a hedonic pricing model using multiple linear regression method
+
+### Building a hedonic pricing model using multiple linear regression method
 
 ```{r}
 condo.mlr <- lm(formula = SELLING_PRICE ~ AREA_SQM + AGE    + 
@@ -206,6 +214,7 @@ condo.mlr <- lm(formula = SELLING_PRICE ~ AREA_SQM + AGE    +
                 data=condo_resale.sf)
 summary(condo.mlr)
 ```
+
 ### Preparing Publication Quality Table: olsrr method
 
 ```{r}
@@ -217,6 +226,7 @@ condo.mlr1 <- lm(formula = SELLING_PRICE ~ AREA_SQM + AGE +
                  data=condo_resale.sf)
 ols_regress(condo.mlr1)
 ```
+
 ### Preparing Publication Quality Table: gtsummary method
 
 ```{r}
@@ -232,25 +242,31 @@ tbl_regression(condo.mlr1,
                 AIC, statistic,
                 p.value, sigma))
 ```
-#### Checking for multicolinearity    
+
+#### Checking for multicolinearity
 
 ```{r}
 ols_vif_tol(condo.mlr1)
 ```
+
 #### Test for Non-Linearity
 
 ```{r}
 ols_plot_resid_fit(condo.mlr1)
 ```
+
 #### Test for Normality Assumption
 
 ```{r}
 ols_plot_resid_hist(condo.mlr1)
 ```
+
 ##### A more formal statistical test method:
+
 ```{r}
 ols_test_normality(condo.mlr1)
 ```
+
 ### Testing for Spatial Autocorrelation
 
 #### 1) join the newly created data frame with condo_resale.sf object.
@@ -261,13 +277,13 @@ condo_resale.res.sf <- cbind(condo_resale.sf,
 rename(`MLR_RES` = `condo.mlr1.residuals`)
 ```
 
-
 #### 2) convert condo_resale.res.sf from simple feature object into a SpatialPointsDataFrame because spdep package can only process sp conformed spatial data objects.
 
-```{r} 
+```{r}
 condo_resale.sp <- as_Spatial(condo_resale.res.sf)
 condo_resale.sp
 ```
+
 ```{r}
 tmap_mode("view")
 ```

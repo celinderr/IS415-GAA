@@ -947,73 +947,73 @@ train
 ## Calibrating Geographical Random Forest Model
 
 ```{r}
-set.seed(1234)
-gwRF_adaptive <- grf(formula = resale_price ~ floor_area_sqm + storey_order +
-                       remaining_lease_mths + PROX_CBD + PROX_ELDERLYCARE +
-                       PROX_HAWKER + PROX_MRT + PROX_PARK + PROX_MALL +
-                       PROX_SUPERMARKET + WITHIN_350M_PRESCHOOL + WITHIN_350M_CHILDCARE +
-                       WITHIN_350M_BUS + WITHIN_1KM_PRISCH,
-                     dframe=train_data, 
-                     bw=bw_adaptive,
-                     kernel="adaptive",
-                     coords=train_coords,
-                     ntree = 30,
-                     min.node.size = 20)
+# set.seed(1234)
+# gwRF_adaptive <- grf(formula = resale_price ~ floor_area_sqm + storey_order +
+#                       remaining_lease_mths + PROX_CBD + PROX_ELDERLYCARE +
+#                       PROX_HAWKER + PROX_MRT + PROX_PARK + PROX_MALL +
+#                       PROX_SUPERMARKET + WITHIN_350M_PRESCHOOL + WITHIN_350M_CHILDCARE +
+#                       WITHIN_350M_BUS + WITHIN_1KM_PRISCH,
+#                     dframe=train_data, 
+#                     bw=bw_adaptive,
+#                     kernel="adaptive",
+#                     coords=train_coords,
+#                     ntree = 30,
+#                     min.node.size = 20)
 ```
 
 ### Save model output
 
 ```{r}
-write_rds(gwRF_adaptive, "data/rds/gwRF_adaptive.rds")
+# write_rds(gwRF_adaptive, "data/rds/gwRF_adaptive.rds")
 ```
 
 ## Predicting using test data
 
 ```{r}
-test <- cbind(test, test_coords) %>%
-  st_drop_geometry()
+#test <- cbind(test, test_coords) %>%
+#  st_drop_geometry()
 ```
 
 ```{r}
-gwRF_pred <- predict.grf(gwRF_adaptive,
-                           test_data,
-                           x.var.name="X",
-                           y.var.name="Y",
-                           local.w=1,
-                           global.w=0)
+#gwRF_pred <- predict.grf(gwRF_adaptive,
+#                           test_data,
+#                           x.var.name="X",
+#                           y.var.name="Y",
+#                           local.w=1,
+#                           global.w=0)
 ```
 
 ```{r}
-GRF_pred <- write_rds(gwRF_pred, "data/rds/GRF_pred.rds")
+# GRF_pred <- write_rds(gwRF_pred, "data/rds/GRF_pred.rds")
 ```
 
 ### Convert output into dataframe
 ```{r}
-GRF_pred <- read_rds("data/rds/GRF_pred.rds")
-GRF_pred_df <- as.data.frame(GRF_pred)
+# GRF_pred <- read_rds("data/rds/GRF_pred.rds")
+# GRF_pred_df <- as.data.frame(GRF_pred)
 ```
 ```{r}
-predicted_test_data <- cbind(test, GRF_pred_df) 
+# predicted_test_data <- cbind(test, GRF_pred_df) 
 ```
 
 ```{r}
-write_rds(predicted_test_data, "data/rds/predicted_test_data.rds")
+# write_rds(predicted_test_data, "data/rds/predicted_test_data.rds")
 ```
 
 ### Root Mean Squared Error
 
 ```{r}
-Metrics::rmse(predicted_test_data$resale_price,
-     predicted_test_data$GRF_pred)
+# Metrics::rmse(predicted_test_data$resale_price,
+#     predicted_test_data$GRF_pred)
 ```
 
 ## Visualisation of Predicted Values
 
 ```{r}
-ggplot(data = predicted_test_data,
-       aes(x = GRF_pred,
-           y = resale_price)) +
-  geom_point()
+#ggplot(data = predicted_test_data,
+#       aes(x = GRF_pred,
+#           y = resale_price)) +
+#  geom_point()
 ```
 
 ## Conclusion: 
