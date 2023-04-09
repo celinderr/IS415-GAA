@@ -1,0 +1,128 @@
+---
+title: "In Class 7: Emerging Cold and Hot Spots"
+---
+
+## Load Packages
+
+```{r}
+pacman:: p_load(tidyverse, sf, sfdep, plotly, tmap, zoo, plyr)
+```
+
+## Import Data
+
+```{r}
+hunan <- st_read("data/geospatial",
+            layer = "Hunan")
+```
+
+```{r}
+GDPPC <- read_csv("./data/aspatial/Hunan_GDPPC.csv")
+```
+
+```{r}
+hunan_GDPPC <- left_join(GDPPC, hunan)%>%
+  select(1:4, 7, 10)
+```
+
+## Creating a Time Series Cube
+
+```{r}
+GDPPC_st <- spacetime(GDPPC, hunan,
+                      .loc_col = "County",
+                      .time_col = "Year")
+GDPPC_st
+```
+
+:::
+
+```{r}
+GDPPC_nb <- GDPPC_st %>%
+  activate("geometry") %>%
+  mutate(
+    nb = include_self(st_contiguity(geometry)),
+    wt = st_weights(nb)
+        ) %>%
+  set_nbs("nb") %>%
+  set_wts("wt")
+```
+
+## Computing Gi
+
+```{r}
+gi_star <- GDPPC_nb %>%
+  group_by(Year) %>%
+  mutate(gi_star = local_gstar_perm(
+      GDPPC, nb, wt, nsim = 99)) %>%
+  tidyr::unnest(gi_star)
+
+```
+
+## Mann-Kendall Test
+```{r}
+cbg <- gi_star %>% 
+  ungroup() %>% 
+  filter(County == "Changsha") |> 
+  select(County, Year, gi_star)
+```
+
+```{r}
+ggplot(data = cbg, 
+       aes(x = Year, 
+           y = gi_star)) +
+  geom_line() +
+  theme_light()
+```
+
+```{r}
+p <- ggplot(data = cbg, 
+       aes(x = Year, 
+           y = gi_star)) +
+  geom_line() +
+  theme_light()
+
+ggplotly(p)
+```
+```{r}
+cbg %>%
+  summarise(mk = list(
+    unclass(
+      Kendall::MannKendall(gi_star)))) %>% 
+  tidyr::unnest_wider(mk)
+```
+
+```{r}
+ehsa <- gi_star %>%
+  group_by(County) %>%
+  summarise(mk = list(
+    unclass(
+      Kendall::MannKendall(gi_star)))) %>%
+  tidyr::unnest_wider(mk)
+```
+
+### Arrange to show significant emerging hot/cold spots
+
+```{r}
+emerging <- ehsa %>% 
+  arrange(sl, abs(tau)) %>% 
+  slice(1:5)
+```
+
+### Performinng Emerging Hotspot Analysis
+
+```{r}
+ehsa <- emerging_hotspot_analysis(
+  x = GDPPC_st, 
+  .var = "GDPPC", 
+  k = 1, 
+  nsim = 99
+)
+```
+
+### Visualising distribution of EHSA classes
+
+```{r}
+ggplot(data = ehsa,
+       aes(x = classification)) +
+  geom_bar()
+```
+

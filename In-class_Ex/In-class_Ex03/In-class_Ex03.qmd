@@ -3,7 +3,6 @@ title: "In-class Exercise 3: Analytical Mapping"
 execute:
   warning: false
 date: "`r Sys.Date()`"
-echo: true
 ---
 
 # Installing and loading packages

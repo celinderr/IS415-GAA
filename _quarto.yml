@@ -40,7 +40,7 @@ website:
           - text: "In-class Exercise 7: GLSA"
             href: "In-class_Ex/In-class_Ex07/In-class_Ex07.html"
           - text: "In-class Exercise 7: EHSA"
-          href: "In-class_Ex/In-class_Ex07/In-class_Ex07.html"
+            href: "In-class_Ex/In-class_Ex07/In-class_Ex07.html"
       - text: "Take Home Exercise"
         menu:
          - text: "Take Home Exercise 1"
