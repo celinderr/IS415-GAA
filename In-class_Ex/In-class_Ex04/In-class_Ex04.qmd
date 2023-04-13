@@ -35,22 +35,7 @@ mpsz_sf <- st_read(dsn = "data",
 tmap_mode('view')
 ```
 
-## Set tmode to plotting
-
-```{r}
-tm_shape(childcare_sf)+
-  tm_dots()
-```
-
-## Set tmode to plotting
-
-```{r}
-tmap_mode('plot')
-```
-
-# Geospatial Data wrangling
-
-## Converting sf data frames to sp's Spatial\* class
+## Data Wrangling
 
 ```{r}
 childcare <- as_Spatial(childcare_sf)
@@ -59,7 +44,39 @@ sg <- as_Spatial(sg_sf)
 ```
 
 ```{r}
-childcare
+childcare_sp <- as(childcare, "SpatialPoints")
+sg_sp <- as(sg, "SpatialPolygons")
 ```
 
-------------------------------------------------------------------------
+```{r}
+childcare_ppp <- as(childcare_sp, "ppp")
+childcare_ppp
+```
+
+### Duplicated Point Events
+
+```{r}
+childcare_ppp_jit <- rjitter(childcare_ppp, 
+                             retry=TRUE, 
+                             nsim=1, 
+                             drop=TRUE)
+```
+
+```{r}
+any(duplicated(childcare_ppp_jit))
+```
+## Creating Owin object
+
+```{r}
+sg_owin <- as(sg_sp, "owin")
+plot(sg_owin)
+```
+## Combining point events object and owin object
+
+```{r}
+childcareSG_ppp = childcare_ppp[sg_owin]
+summary(childcareSG_ppp)
+```
+```{r}
+plot(childcareSG_ppp)
+```
