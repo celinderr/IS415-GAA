@@ -3,7 +3,7 @@ title: "In-class Exercise 6: Spatial Weights and Applications"
 ---
 
 ```{r}
-pacman::p_load(sf, tmap , tidyverse, sfdep, dplyr)
+pacman::p_load(sf, sfdep, tmap, tidyverse)
 ```
 
 # Importing geospatial data
@@ -16,7 +16,7 @@ hunan_sf <- st_read("data/geospatial",
 # Importing attribute data
 
 ```{r}
-hunan_2012 <- read_csv("./data/aspatial/Hunan_2012.csv")
+hunan_2012 <- st_read("./data/aspatial/Hunan_2012.csv")
 ```
 
 # Combine by using left join
@@ -46,6 +46,8 @@ tm_shape(hunan_GDPPC)+
   tm_borders(alpha = 0.5)
 ```
 
+# Deriving Contiguity Spatial Weights
+
 # Identify area neighbours
 
 ## Contiguity Neighbours Method
@@ -53,18 +55,98 @@ tm_shape(hunan_GDPPC)+
 ### st_contiguity() (to derive a contiguity neighcor by using Queen's method)
 
 ```{r}
-cn_queen <- hunan_GDPPC %>%
+nb_queen <- hunan_GDPPC %>%
     mutate(nb = st_contiguity(geometry),
                 .before = 1)
 ```
 
-# Computing contiguity weights
+```{r}
+summary(nb_queen$nb)
+```
+```{r}
+nb_queen$County[c(2,3,4,57,85)]
+```
+## ## Contiguity Neighbours: Rooks' Method
 
-## Contiguity weights: Queen's method
+```{r}
+nb_rook <- hunan_GDPPC %>% 
+  mutate(nb = st_contiguity(geometry,
+                            queen = FALSE),
+         .before = 1)
+```
+## Identify higher order neighbors
+
+```{r}
+nb2_queen <-  hunan_GDPPC %>% 
+  mutate(nb = st_contiguity(geometry),
+         nb2 = st_nb_lag_cumul(nb, 2),
+         .before = 1)
+```
+
+```{r}
+nb2_queen
+```
+# Deriving contiguity weights
+
+## Queen's method
 
 ```{r}
 wm_q <- hunan_GDPPC %>%
   mutate(nb = st_contiguity(geometry),
+         wt = st_weights(nb,
+                         style = "W"),
+         .before = 1) 
+```
+
+```{r}
+wm_q
+```
+## Rooks' method
+
+```{r}
+wm_r <- hunan %>%
+  mutate(nb = st_contiguity(geometry,
+                            queen = FALSE),
          wt = st_weights(nb),
+         .before = 1) 
+```
+
+# Distance-based Weights
+
+## Deriving fixed distance weights
+
+````{r}
+geo <- sf::st_geometry(hunan_GDPPC)
+nb <- st_knn(geo, longlat = TRUE)
+dists <- unlist(st_nb_dists(geo, nb))
+```
+```{r}
+summary(dists)
+```
+
+```{r}
+wm_fd <- hunan_GDPPC %>%
+  mutate(nb = st_dist_band(geometry,
+                           upper = 66),
+               wt = st_weights(nb),
+               .before = 1)
+```
+## Deriving adaptive distance weights
+
+```{r}
+wm_ad <- hunan_GDPPC %>% 
+  mutate(nb = st_knn(geometry,
+                     k=8),
+         wt = st_weights(nb),
+               .before = 1)
+```
+## Calcuglating inverse distance weights
+
+```{r}
+wm_idw <- hunan_GDPPC %>%
+  mutate(nb = st_contiguity(geometry),
+         wts = st_inverse_distance(nb, geometry,
+                                   scale = 1,
+                                   alpha = 1),
          .before = 1)
 ```
